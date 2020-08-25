@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+.card {
+  width: 100%;
+  max-width: 800px;
+  padding: 100px 0px;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loginButton {
+  padding-top: 50px;
+}
+
+.input {
+  margin-top: 20px;
+}

@@ -1,0 +1,26 @@
+.menuButton {
+  color: inherit;
+}
+
+.menuItemSpace {
+  padding: 0px 20px;
+  cursor: pointer;
+}
+
+.toolbarContainer {
+  background-color: #e57373;
+  display: flex;
+  justify-content: center;
+}
+
+.toolbar {
+  width: 100%;
+  max-width: 900px;
+}
+
+.loginItem {
+  margin-left: auto;
+}
+.signup {
+  padding-left: 10px;
+}
