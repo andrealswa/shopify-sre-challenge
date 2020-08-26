@@ -4,7 +4,7 @@ import styles from './ImageGallery.module.css';
 
 const imageData = [{ url: '1' }, { url: '2' }, { url: '3' }];
 
-const ImageGallery = () => {
+export const ImageGallery = () => {
   return (
     <div className={styles.container}>
       {imageData.map((image, key) => {
@@ -20,4 +20,3 @@ const ImageGallery = () => {
   );
 };
 
-export default ImageGallery;
