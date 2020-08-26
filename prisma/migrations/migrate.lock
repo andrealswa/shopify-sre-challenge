@@ -1,0 +1,4 @@
+# Prisma Migrate lockfile v1
+
+20200826152037-first-migrate
+20200826152501-added-img-url-to-post
