@@ -11,6 +11,7 @@ type Mutation {
   createDraft(authorEmail: String, content: String, title: String!): Post!
   deletePost(postId: String): Post
   publish(postId: String): Post
+  sendImageToBackend(imgUrl: String): String!
   signupUser(email: String!, name: String): User!
 }
 
@@ -27,6 +28,7 @@ type Query {
   drafts: [Post!]!
   feed: [Post!]!
   filterPosts(searchString: String): [Post!]!
+  getImages: [String!]!
   post(postId: String!): Post!
 }
 

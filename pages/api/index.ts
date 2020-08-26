@@ -82,6 +82,13 @@ const Query = objectType({
       },
     })
 
+    t.list.field('getImages', {
+      type: 'String',
+      resolve: (_parent, _args, ctx) => {
+        return null
+      }
+    })
+
     t.list.field('filterPosts', {
       type: 'Post',
       args: {
@@ -104,6 +111,18 @@ const Query = objectType({
 const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
+    // custom resolver for images from frontend
+    t.field('sendImageToBackend', {
+      type: "String",
+      args: {
+        imgUrl: stringArg()
+      },
+      resolve: (_, { imgUrl }, ctx) => {
+        console.log("Image Uploaded To Database")
+        return null
+      }
+    })
+
     t.field('signupUser', {
       type: 'User',
       args: {

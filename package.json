@@ -19,6 +19,7 @@
     "@nexus/schema": "^0.15.0",
     "@prisma/client": "^2.5.1",
     "apollo-server-micro": "^2.16.1",
+    "aws-sdk": "^2.739.0",
     "cookie": "^0.4.1",
     "crypto": "^1.0.1",
     "graphql": "^15.3.0",

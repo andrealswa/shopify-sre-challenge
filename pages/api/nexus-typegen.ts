@@ -67,6 +67,7 @@ export interface NexusGenFieldTypes {
     createDraft: NexusGenRootTypes['Post']; // Post!
     deletePost: NexusGenRootTypes['Post'] | null; // Post
     publish: NexusGenRootTypes['Post'] | null; // Post
+    sendImageToBackend: string; // String!
     signupUser: NexusGenRootTypes['User']; // User!
   }
   Post: { // field return type
@@ -81,6 +82,7 @@ export interface NexusGenFieldTypes {
     drafts: NexusGenRootTypes['Post'][]; // [Post!]!
     feed: NexusGenRootTypes['Post'][]; // [Post!]!
     filterPosts: NexusGenRootTypes['Post'][]; // [Post!]!
+    getImages: string[]; // [String!]!
     post: NexusGenRootTypes['Post']; // Post!
   }
   User: { // field return type
@@ -103,6 +105,9 @@ export interface NexusGenArgTypes {
     }
     publish: { // args
       postId?: string | null; // String
+    }
+    sendImageToBackend: { // args
+      imgUrl?: string | null; // String
     }
     signupUser: { // args
       email: string; // String!

@@ -3,6 +3,7 @@ import ImageUploading from "react-images-uploading";
 import PublishRoundedIcon from '@material-ui/icons/PublishRounded';
 import Button from '@material-ui/core/Button';
 
+import aws from 'aws-sdk'
 
 export const ImageUpload = () => {
 
@@ -15,12 +16,17 @@ export const ImageUpload = () => {
     setImages(imageList);
   };
 
+
   // for seeing the contents of the image objects
-  useEffect(() => {
-    images.forEach(image => {
-      console.log(image)
-    })
-  }, [images])
+  // useEffect(() => {
+  //   images.forEach(image => {
+  //     console.log(image)
+  //   })
+  // }, [images])
+
+  const handleImageUpload = () => {
+    console.log(images)
+  }
 
   return (
     <div className="App">
@@ -65,6 +71,7 @@ export const ImageUpload = () => {
             </div>
           )}
       </ImageUploading>
+      <Button onClick={handleImageUpload}>Upload Images</Button>
     </div>
   );
 };

@@ -10,9 +10,9 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import styles from './Login.module.css';
 
-const SignInMutation = gql`
-  mutation SignInMutation($email: String!, $password: String!) {
-    signIn(input: { email: $email, password: $password }) {
+const LoginMutation = gql`
+  mutation LoginMutation($email: String!, $password: String!) {
+    signupUser(input: { email: $email, password: $password }) {
       user {
         id
         email
@@ -23,7 +23,7 @@ const SignInMutation = gql`
 
 const Login = () => {
   const client = useApolloClient();
-  const [login] = useMutation(SignInMutation);
+  const [login] = useMutation(LoginMutation);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
