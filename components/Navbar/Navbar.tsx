@@ -23,26 +23,36 @@ export const Navbar = () => {
               <MenuIcon />
             </IconButton> */}
             <Typography className={styles.menuItemSpace} variant="h6">
-              <Link href="/">Home</Link>
+              <Link href="/">
+                <a>Home</a>
+              </Link>
             </Typography>
             <Typography variant="h6" className={styles.menuItemSpace}>
-              <Link href="/imageupload">Image Repository</Link>
+              <Link href="/imageupload">
+                <a>Image Repository</a>
+              </Link>
             </Typography>
             <Typography variant="h6" className={styles.menuItemSpace}>
-              <Link href="/imageupload">Add / Delete Images</Link>
+              <Link href="/imageupload">
+                <a>Add / Delete Images</a>
+              </Link>
             </Typography>
 
             <div className={styles.loginItem}>
               <span>
                 <Link href="/login">
-                  <Button variant="contained" color="primary">
-                    Log in
-                  </Button>
+                  <a>
+                    <Button variant="contained" color="primary">
+                      Log in
+                    </Button>
+                  </a>
                 </Link>
               </span>
               <span className={styles.signup}>
                 <Link href="/signup">
-                  <Button color="inherit">Sign up</Button>
+                  <a>
+                    <Button color="inherit">Sign up</Button>
+                  </a>
                 </Link>
               </span>
             </div>

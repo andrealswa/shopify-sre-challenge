@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { gql, useMutation } from '@apollo/client';
 import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -7,6 +8,17 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import styles from './Signup.module.css';
+
+const SignUpMutation = gql`
+  mutation SignUpMutation($email: String!, $password: String!) {
+    signUp(input: { email: $email, password: $password }) {
+      user {
+        id
+        email
+      }
+    }
+  }
+`;
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -16,6 +28,27 @@ const Signup = () => {
   const [emailInvalid, setEmailInvalid] = useState(false);
   const [passwordInvalid, setPasswordInvalid] = useState(false);
   const [checkPasswordInvalid, setCheckPasswordInvalid] = useState(false);
+
+  // use gql mutation
+  const [signUp] = useMutation(SignUpMutation);
+
+  // handle signing up a user
+  const handleSubmit = async () => {
+    event.preventDefault();
+
+    try {
+      await signUp({
+        variables: {
+          email: email,
+          password: password,
+        },
+      });
+
+      console.log('success!');
+    } catch (error) {
+      console.log('something is wrong');
+    }
+  };
 
   const validateEmail = (email: string) => {
     const regularExpression = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -92,7 +125,20 @@ const Signup = () => {
             />
           </form>
           <div className={styles.loginButton}>
-            <Button variant="contained">Log in</Button>
+            <Button
+              disabled={
+                emailInvalid ||
+                passwordInvalid ||
+                checkPasswordInvalid ||
+                email.length === 0 ||
+                password.length === 0 ||
+                checkPassword.length === 0
+              }
+              onClick={handleSubmit}
+              variant="contained"
+            >
+              Sign up
+            </Button>
           </div>
         </CardContent>
       </Card>
