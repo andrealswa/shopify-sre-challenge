@@ -18,6 +18,7 @@ type Post {
   author: User
   content: String
   id: Int!
+  imgUrl: String!
   published: Boolean!
   title: String!
 }

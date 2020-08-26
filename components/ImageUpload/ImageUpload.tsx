@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ImageUploading from "react-images-uploading";
 import PublishRoundedIcon from '@material-ui/icons/PublishRounded';
 import Button from '@material-ui/core/Button';
@@ -8,12 +8,19 @@ export const ImageUpload = () => {
 
 
   const [images, setImages] = useState([]);
-  const maxNumber = 69;
+  const maxNumber = 100;
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
     console.log(imageList, addUpdateIndex);
     setImages(imageList);
   };
+
+  // for seeing the contents of the image objects
+  useEffect(() => {
+    images.forEach(image => {
+      console.log(image)
+    })
+  }, [images])
 
   return (
     <div className="App">

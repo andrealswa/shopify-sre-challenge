@@ -35,6 +35,7 @@ const Post = objectType({
       nullable: true,
     })
     t.boolean('published')
+    t.string('imgUrl')
     t.field('author', {
       type: 'User',
       nullable: true,

@@ -41,6 +41,7 @@ export interface NexusGenRootTypes {
   Post: { // root type
     content?: string | null; // String
     id: number; // Int!
+    imgUrl: string; // String!
     published: boolean; // Boolean!
     title: string; // String!
   }
@@ -72,6 +73,7 @@ export interface NexusGenFieldTypes {
     author: NexusGenRootTypes['User'] | null; // User
     content: string | null; // String
     id: number; // Int!
+    imgUrl: string; // String!
     published: boolean; // Boolean!
     title: string; // String!
   }
