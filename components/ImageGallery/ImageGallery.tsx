@@ -9,7 +9,7 @@ export const ImageGallery = () => {
     <div className={styles.container}>
       {imageData.map((image, key) => {
         return (
-          <div className={styles.cardWrapper}>
+          <div key={key} className={styles.cardWrapper}>
             <Card className={styles.card} key={key}>
               {image.url}
             </Card>
