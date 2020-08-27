@@ -11,7 +11,7 @@ import styles from './Signup.module.css';
 
 const SignUpMutation = gql`
   mutation SignUpMutation($email: String!, $password: String!) {
-    signUp(input: { email: $email, password: $password }) {
+    signupUser(input: { email: $email, password: $password }) {
       user {
         id
         email

@@ -49,7 +49,6 @@ export interface NexusGenRootTypes {
   User: { // root type
     email: string; // String!
     id: number; // Int!
-    name: string; // String!
   }
 }
 
@@ -88,7 +87,6 @@ export interface NexusGenFieldTypes {
   User: { // field return type
     email: string; // String!
     id: number; // Int!
-    name: string; // String!
     posts: NexusGenRootTypes['Post'][]; // [Post!]!
   }
 }
@@ -111,7 +109,7 @@ export interface NexusGenArgTypes {
     }
     signupUser: { // args
       email: string; // String!
-      name?: string | null; // String
+      password: string; // String!
     }
   }
   Query: {

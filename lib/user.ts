@@ -15,6 +15,8 @@ export async function createUser({ email, password }) {
   const hash = crypto
     .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
     .toString('hex');
+
+
   const user = {
     id: uuidv4(),
     createdAt: Date.now(),

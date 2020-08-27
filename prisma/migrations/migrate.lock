@@ -2,3 +2,5 @@
 
 20200826152037-first-migrate
 20200826152501-added-img-url-to-post
+20200827132743-added-hash-and-salt-to-user-and-removed-name
+20200827133157-removed-name

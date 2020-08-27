@@ -2,6 +2,7 @@ import { makeSchema, objectType, stringArg, asNexusMethod } from '@nexus/schema'
 import { GraphQLDate } from 'graphql-iso-date'
 import { PrismaClient } from '@prisma/client'
 import { ApolloServer } from 'apollo-server-micro'
+import crypto from 'crypto'; // for signupUser mutation
 import path from 'path'
 
 export const GQLDate = asNexusMethod(GraphQLDate, 'date')
@@ -12,7 +13,6 @@ const User = objectType({
   name: 'User',
   definition(t) {
     t.int('id')
-    t.string('name')
     t.string('email')
     t.list.field('posts', {
       type: 'Post',
@@ -126,15 +126,21 @@ const Mutation = objectType({
     t.field('signupUser', {
       type: 'User',
       args: {
-        name: stringArg(),
         email: stringArg({ nullable: false }),
+        password: stringArg({ nullable: false }),
       },
-      resolve: (_, { name, email }, ctx) => {
+      resolve: (_, { email, password }, ctx) => {
+        const salt = crypto.randomBytes(16).toString('hex');
+        const hash = crypto
+          .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
+          .toString('hex');
+
         return prisma.user.create({
           data: {
-            name,
             email,
-          },
+            hash,
+            salt
+          }
         })
       },
     })
