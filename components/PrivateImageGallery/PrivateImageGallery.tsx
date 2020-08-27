@@ -1,10 +1,10 @@
 import { Card } from '@material-ui/core';
 
-import styles from './ImageGallery.module.css';
+import styles from './PrivateImageGallery.module.css';
 
 const imageData = [{ url: '1' }, { url: '2' }, { url: '3' }];
 
-export const ImageGallery = () => {
+export const PrivateImageGallery = (images: any) => {
   return (
     <div className={styles.container}>
       {imageData.map((image, key) => {

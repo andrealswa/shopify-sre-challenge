@@ -205,11 +205,33 @@ const Mutation = objectType({
           type: ImageInput, required: true
         })
       },
-      resolve: ((_, { input }, ctx) => {
+      resolve: (async (_, { input }, ctx) => {
+
+        console.log("AT RESOLVER FOR UPLOAD IMAGE")
 
         // const res = await uploadImage(input.path);
         console.log(input.path)
 
+        // Configure AWS with your access and secret key.
+
+        // Configure AWS to use promise
+        aws.config.setPromisesDependency(require('bluebird'));
+        aws.config.update({ accessKeyId: process.env.ID, secretAccessKey: process.env.SECRET, region: process.env.REGION });
+
+
+        const s3 = new aws.S3();
+        const base64Data = Buffer.from(input.path.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+        const type = input.path.split(';')[0].split('/')[1];
+        const userId = 1;
+
+        const params = {
+          Bucket: process.env.BUCKET_NAME,
+          Key: `${userId}.${type}`, // type is not required
+          Body: base64Data,
+          ACL: 'public-read',
+          ContentEncoding: 'base64', // required
+          ContentType: `image/${type}` // required. Notice the back ticks
+        }
 
         // return photon.images.create({
         //   data: {
@@ -219,8 +241,20 @@ const Mutation = objectType({
         //   }
         // });
 
+        let location = '';
+        let key = '';
+        try {
+          const { Location, Key } = await s3.upload(params).promise();
+          location = Location;
+          key = Key;
+        } catch (error) {
+          // console.log(error)
+        }
+
+        console.log(location, key);
+
         return {
-          id: "123",
+          id: location,
           publicId: "111",
           format: "222",
           version: "333"

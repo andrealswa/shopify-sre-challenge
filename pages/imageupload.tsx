@@ -1,11 +1,11 @@
 import { ImageUpload } from '../components/ImageUpload/ImageUpload'
-import { ImageGallery } from '../components/ImageGallery/ImageGallery';
+import { PrivateImageGallery } from '../components/PrivateImageGallery/PrivateImageGallery';
 
 const imagegallery = () => {
   return (
     <div>
       <ImageUpload />
-      <ImageGallery />
+      <PrivateImageGallery />
     </div>
   );
 };
