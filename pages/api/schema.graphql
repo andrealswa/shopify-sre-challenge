@@ -7,12 +7,23 @@ A date string, such as 2007-12-03, compliant with the `full-date` format outline
 """
 scalar Date
 
+type Image {
+  format: String!
+  id: ID!
+  publicId: String!
+  version: String!
+}
+
+input ImageInput {
+  path: String!
+}
+
 type Mutation {
   createDraft(authorEmail: String, content: String, title: String!): Post!
   deletePost(postId: String): Post
-  imageUpload(imgUrl: String): String!
   publish(postId: String): Post
   signupUser(email: String!, password: String!): User!
+  uploadImage(input: ImageInput!): Image!
 }
 
 type Post {

@@ -22,6 +22,9 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  ImageInput: { // input type
+    path: string; // String!
+  }
 }
 
 export interface NexusGenEnums {
@@ -37,6 +40,12 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenRootTypes {
+  Image: { // root type
+    format: string; // String!
+    id: string; // ID!
+    publicId: string; // String!
+    version: string; // String!
+  }
   Mutation: {};
   Post: { // root type
     content?: string | null; // String
@@ -52,6 +61,7 @@ export interface NexusGenRootTypes {
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
+  ImageInput: NexusGenInputs['ImageInput'];
   String: NexusGenScalars['String'];
   Int: NexusGenScalars['Int'];
   Float: NexusGenScalars['Float'];
@@ -61,12 +71,18 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
 }
 
 export interface NexusGenFieldTypes {
+  Image: { // field return type
+    format: string; // String!
+    id: string; // ID!
+    publicId: string; // String!
+    version: string; // String!
+  }
   Mutation: { // field return type
     createDraft: NexusGenRootTypes['Post']; // Post!
     deletePost: NexusGenRootTypes['Post'] | null; // Post
-    imageUpload: string; // String!
     publish: NexusGenRootTypes['Post'] | null; // Post
     signupUser: NexusGenRootTypes['User']; // User!
+    uploadImage: NexusGenRootTypes['Image']; // Image!
   }
   Post: { // field return type
     author: NexusGenRootTypes['User'] | null; // User
@@ -100,15 +116,15 @@ export interface NexusGenArgTypes {
     deletePost: { // args
       postId?: string | null; // String
     }
-    imageUpload: { // args
-      imgUrl?: string | null; // String
-    }
     publish: { // args
       postId?: string | null; // String
     }
     signupUser: { // args
       email: string; // String!
       password: string; // String!
+    }
+    uploadImage: { // args
+      input: NexusGenInputs['ImageInput']; // ImageInput!
     }
   }
   Query: {
@@ -130,9 +146,9 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Mutation" | "Post" | "Query" | "User";
+export type NexusGenObjectNames = "Image" | "Mutation" | "Post" | "Query" | "User";
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = "ImageInput";
 
 export type NexusGenEnumNames = never;
 

@@ -1,4 +1,4 @@
-import { makeSchema, objectType, stringArg, asNexusMethod } from '@nexus/schema'
+import { makeSchema, objectType, stringArg, asNexusMethod, scalarType, inputObjectType, arg } from '@nexus/schema'
 import { GraphQLDate } from 'graphql-iso-date'
 import { PrismaClient } from '@prisma/client'
 import { ApolloServer } from 'apollo-server-micro'
@@ -6,13 +6,67 @@ import { v4 as uuidv4 } from 'uuid'; // for unique images
 import crypto from 'crypto'; // for signupUser mutation
 import path from 'path'
 import aws from 'aws-sdk'
+import * as FileType from "file-type";
+
 
 import dotenv from 'dotenv'
+import { GraphQLError } from 'graphql';
 dotenv.config()
 
 export const GQLDate = asNexusMethod(GraphQLDate, 'date')
 
 const prisma = new PrismaClient()
+
+
+const Upload = scalarType({
+  name: "Upload",
+  asNexusMethod: "upload", // We set this to be used as a method later as `t.upload()` if needed
+  description: "desc",
+  serialize: () => {
+    throw new GraphQLError("Upload serialization unsupported.");
+  },
+  parseValue: async (value) => {
+    const upload = await value;
+    const stream = upload.createReadStream();
+    const fileType = await FileType.fromStream(stream);
+
+    if (fileType?.mime !== upload.mimetype)
+      throw new GraphQLError("Mime type does not match file content.");
+
+    return upload;
+  },
+  parseLiteral: (ast) => {
+    throw new GraphQLError("Upload literal unsupported.", ast);
+  },
+});
+
+const File = objectType({
+  name: "File",
+  definition(t) {
+    t.id("id");
+    t.string("path");
+    t.string("filename");
+    t.string("mimetype");
+    t.string("encoding");
+  },
+});
+
+const Image = objectType({
+  name: "Image",
+  definition(t) {
+    t.id("id");
+    t.string("publicId");
+    t.string("format");
+    t.string("version");
+  }
+});
+
+const ImageInput = inputObjectType({
+  name: "ImageInput",
+  definition(t) {
+    t.string("path", { required: true });
+  }
+});
 
 const User = objectType({
   name: 'User',
@@ -41,7 +95,6 @@ const Post = objectType({
       nullable: true,
     })
     t.boolean('published')
-    t.string('imgUrl')
     t.field('author', {
       type: 'User',
       nullable: true,
@@ -143,41 +196,37 @@ const Query = objectType({
 const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
+
     // custom resolver for images from frontend
-    t.field('imageUpload', {
-      type: File,
+    t.field("uploadImage", {
+      type: Image,
       args: {
-        imgFile: "String"
+        input: arg({
+          type: ImageInput, required: true
+        })
       },
-      resolve: (_, { imgFile }, ctx) => {
-        const s3 = new aws.S3({
-          accessKeyId: process.env.ID,
-          secretAccessKey: process.env.SECRET
-        });
+      resolve: ((_, { input }, ctx) => {
 
-        // convert from data_url to something aws s3 body can take.
-
-        const params = {
-          Bucket: process.env.BUCKET_NAME,
-          Region: 'ca-central-1',
-          Key: `${uuidv4()}`, // File name you want to save as in S3
-          Body: imgFile
-        };
-
-        // Uploading files to the bucket
-        s3.upload(params, function (err, data) {
-          if (err) {
-            throw err;
-          }
-          console.log(`File uploaded successfully. ${data.Location}`);
-        });
+        // const res = await uploadImage(input.path);
+        console.log(input.path)
 
 
+        // return photon.images.create({
+        //   data: {
+        //     publicId: res.public_id,
+        //     format: res.format,
+        //     version: res.version.toString()
+        //   }
+        // });
 
-        console.log("Image Uploaded To Database")
-        return null
-      }
-    })
+        return {
+          id: "123",
+          publicId: "111",
+          format: "222",
+          version: "333"
+        }
+      })
+    });
 
     t.field('signupUser', {
       type: 'User',

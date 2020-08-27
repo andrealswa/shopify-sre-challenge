@@ -22,6 +22,7 @@
     "aws-sdk": "^2.739.0",
     "cookie": "^0.4.1",
     "crypto": "^1.0.1",
+    "file-type": "^15.0.0",
     "graphql": "^15.3.0",
     "graphql-iso-date": "^3.6.1",
     "graphql-tools": "^6.1.0",
@@ -31,6 +32,7 @@
     "nexus-plugin-prisma": "^0.17.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
+    "react-dropzone": "^11.0.3",
     "react-images-uploading": "^3.0.0",
     "react-material-ui-form-validator": "^2.1.1",
     "uuid": "^8.3.0"
