@@ -2,8 +2,13 @@ import { makeSchema, objectType, stringArg, asNexusMethod } from '@nexus/schema'
 import { GraphQLDate } from 'graphql-iso-date'
 import { PrismaClient } from '@prisma/client'
 import { ApolloServer } from 'apollo-server-micro'
+import { v4 as uuidv4 } from 'uuid'; // for unique images
 import crypto from 'crypto'; // for signupUser mutation
 import path from 'path'
+import aws from 'aws-sdk'
+
+import dotenv from 'dotenv'
+dotenv.config()
 
 export const GQLDate = asNexusMethod(GraphQLDate, 'date')
 
@@ -25,6 +30,7 @@ const User = objectType({
     })
   },
 })
+
 
 const Post = objectType({
   name: 'Post',
@@ -62,6 +68,32 @@ const Query = objectType({
           where: { id: Number(args.postId) },
         })
       },
+    })
+
+    t.field('loginUser', {
+      type: 'User',
+      args: {
+        email: stringArg({ nullable: false }),
+        password: stringArg({ nullable: false })
+      },
+      resolve: async (_, args) => {
+
+        // Need to get the salt and hash from the database
+        const user = await prisma.user.findOne({ where: { email: String(args.email) } })
+
+        // Need to hash the input password, then compare that to the stored hash
+        const inputHash = crypto.pbkdf2Sync(args.password, user.salt, 1000, 64, 'sha512').toString('hex');
+        const passwordsMatch = user.hash === inputHash;
+
+        if (!passwordsMatch) {
+          // passwords do not match
+          return;
+        }
+
+        return prisma.user.findOne({
+          where: { email: String(args.email) }
+        })
+      }
     })
 
     t.list.field('feed', {
@@ -112,12 +144,36 @@ const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
     // custom resolver for images from frontend
-    t.field('sendImageToBackend', {
-      type: "String",
+    t.field('imageUpload', {
+      type: File,
       args: {
-        imgUrl: stringArg()
+        imgFile: "String"
       },
-      resolve: (_, { imgUrl }, ctx) => {
+      resolve: (_, { imgFile }, ctx) => {
+        const s3 = new aws.S3({
+          accessKeyId: process.env.ID,
+          secretAccessKey: process.env.SECRET
+        });
+
+        // convert from data_url to something aws s3 body can take.
+
+        const params = {
+          Bucket: process.env.BUCKET_NAME,
+          Region: 'ca-central-1',
+          Key: `${uuidv4()}`, // File name you want to save as in S3
+          Body: imgFile
+        };
+
+        // Uploading files to the bucket
+        s3.upload(params, function (err, data) {
+          if (err) {
+            throw err;
+          }
+          console.log(`File uploaded successfully. ${data.Location}`);
+        });
+
+
+
         console.log("Image Uploaded To Database")
         return null
       }

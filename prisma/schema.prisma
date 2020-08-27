@@ -22,5 +22,4 @@ model Post {
   published Boolean @default(false)
   title     String
   author    User?   @relation(fields: [authorId], references: [id])
-  imgUrl    String?
 }

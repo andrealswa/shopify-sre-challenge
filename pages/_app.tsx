@@ -3,6 +3,8 @@ import { Navbar } from '../components/Navbar/Navbar';
 import { ApolloProvider } from '@apollo/client';
 import { useApollo } from '../apollo/client';
 
+
+
 function MyApp({ Component, pageProps }) {
   const apolloClient = useApollo(pageProps.initialApolloState);
 

@@ -41,7 +41,6 @@ export interface NexusGenRootTypes {
   Post: { // root type
     content?: string | null; // String
     id: number; // Int!
-    imgUrl: string; // String!
     published: boolean; // Boolean!
     title: string; // String!
   }
@@ -65,15 +64,14 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     createDraft: NexusGenRootTypes['Post']; // Post!
     deletePost: NexusGenRootTypes['Post'] | null; // Post
+    imageUpload: string; // String!
     publish: NexusGenRootTypes['Post'] | null; // Post
-    sendImageToBackend: string; // String!
     signupUser: NexusGenRootTypes['User']; // User!
   }
   Post: { // field return type
     author: NexusGenRootTypes['User'] | null; // User
     content: string | null; // String
     id: number; // Int!
-    imgUrl: string; // String!
     published: boolean; // Boolean!
     title: string; // String!
   }
@@ -82,6 +80,7 @@ export interface NexusGenFieldTypes {
     feed: NexusGenRootTypes['Post'][]; // [Post!]!
     filterPosts: NexusGenRootTypes['Post'][]; // [Post!]!
     getImages: string[]; // [String!]!
+    loginUser: NexusGenRootTypes['User']; // User!
     post: NexusGenRootTypes['Post']; // Post!
   }
   User: { // field return type
@@ -101,11 +100,11 @@ export interface NexusGenArgTypes {
     deletePost: { // args
       postId?: string | null; // String
     }
+    imageUpload: { // args
+      imgUrl?: string | null; // String
+    }
     publish: { // args
       postId?: string | null; // String
-    }
-    sendImageToBackend: { // args
-      imgUrl?: string | null; // String
     }
     signupUser: { // args
       email: string; // String!
@@ -115,6 +114,10 @@ export interface NexusGenArgTypes {
   Query: {
     filterPosts: { // args
       searchString?: string | null; // String
+    }
+    loginUser: { // args
+      email: string; // String!
+      password: string; // String!
     }
     post: { // args
       postId: string; // String!
