@@ -182,6 +182,11 @@ const Mutation = objectType({
         password: stringArg({ nullable: false })
       },
       resolve: async (_, args, ctx) => {
+
+        // console.log("cooie from user")
+        // console.log(ctx.req.headers.cookie)
+        // console.log("cooie from user")
+
         // Need to get the salt and hash from the database
         const user = await prisma.user.findOne({ where: { email: String(args.email) } })
 
@@ -217,6 +222,7 @@ const Mutation = objectType({
           sameSite: 'lax',
         })
         ctx.res.setHeader('Set-Cookie', cookie)
+
         // this marks the end of the auth token creation function chain
 
         return prisma.user.findOne({
@@ -225,6 +231,27 @@ const Mutation = objectType({
       }
     })
 
+    t.field("authGuard", {
+      type: "Boolean",
+      resolve: (async (_, _input, ctx) => {
+        const currentCookieToken = ctx.req.headers.cookie
+
+        if (!currentCookieToken) {
+          return false
+        }
+
+        try {
+          const decrypted_jwt = await Iron.unseal(currentCookieToken, process.env.TOKEN_SECRET, Iron.defaults);
+          console.log(decrypted_jwt)
+        } catch (err) {
+          console.log(err.message);
+          return false
+        }
+
+        console.log("auth Guard success")
+        return true
+      })
+    })
 
     // custom resolver for images from frontend
     t.field("uploadImage", {

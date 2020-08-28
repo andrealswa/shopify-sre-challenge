@@ -78,6 +78,7 @@ export interface NexusGenFieldTypes {
     version: string; // String!
   }
   Mutation: { // field return type
+    authGuard: boolean; // Boolean!
     createDraft: NexusGenRootTypes['Post']; // Post!
     deletePost: NexusGenRootTypes['Post'] | null; // Post
     loginUser: NexusGenRootTypes['User']; // User!

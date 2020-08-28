@@ -14,21 +14,13 @@ export const Navbar = () => {
       <AppBar position="static">
         <div className={styles.toolbarContainer}>
           <Toolbar className={styles.toolbar}>
-            {/* <IconButton
-              edge="start"
-              className={styles.menuButton}
-              color="inherit"
-              aria-label="menu"
-            >
-              <MenuIcon />
-            </IconButton> */}
             <Typography className={styles.menuItemSpace} variant="h6">
               <Link href="/">
                 <a>Home</a>
               </Link>
             </Typography>
             <Typography variant="h6" className={styles.menuItemSpace}>
-              <Link href="/imageupload">
+              <Link href="/imagerepository">
                 <a>Image Repository</a>
               </Link>
             </Typography>
