@@ -5,8 +5,10 @@ import { ApolloServer } from 'apollo-server-micro'
 import { v4 as uuidv4 } from 'uuid'; // for unique images
 import crypto from 'crypto'; // for signupUser mutation
 import path from 'path'
-import aws from 'aws-sdk'
+import aws, { PinpointEmail } from 'aws-sdk'
 import * as FileType from "file-type";
+import Iron from '@hapi/iron'
+import { serialize } from 'cookie' // For making a new jwt
 
 
 import dotenv from 'dotenv'
@@ -123,13 +125,14 @@ const Query = objectType({
       },
     })
 
+    // authentication workflow is here
     t.field('loginUser', {
       type: 'User',
       args: {
         email: stringArg({ nullable: false }),
         password: stringArg({ nullable: false })
       },
-      resolve: async (_, args) => {
+      resolve: async (_, args, ctx) => {
 
         // Need to get the salt and hash from the database
         const user = await prisma.user.findOne({ where: { email: String(args.email) } })
@@ -142,6 +145,31 @@ const Query = objectType({
           // passwords do not match
           return;
         }
+
+        // Create the 'session' or content of the JWT token
+        const session = {
+          id: user.id,
+          email: user.email
+        }
+
+        // await setLoginSession(context.res, session)
+        const createdAt = Date.now()
+        const MAX_AGE = 60 * 60 * 8
+        const obj = { ...session, createdAt, maxAge: MAX_AGE }
+        const token = await Iron.seal(obj, process.env.TOKEN_SECRET, Iron.defaults)
+
+        // Then implement setTokenCookie(ctx.res, token )
+        const TOKEN_NAME = 'token'
+        const cookie = serialize(TOKEN_NAME, token, {
+          maxAge: MAX_AGE,
+          expires: new Date(Date.now() + MAX_AGE * 1000),
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          path: '/',
+          sameSite: 'lax',
+        })
+        ctx.res.setHeader('Set-Cookie', cookie)
+        // this marks the end of the auth token creation function chain
 
         return prisma.user.findOne({
           where: { email: String(args.email) }
@@ -269,6 +297,7 @@ const Mutation = objectType({
         password: stringArg({ nullable: false }),
       },
       resolve: (_, { email, password }, ctx) => {
+
         const salt = crypto.randomBytes(16).toString('hex');
         const hash = crypto
           .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
@@ -348,6 +377,11 @@ export const config = {
   },
 };
 
-export default new ApolloServer({ schema }).createHandler({
+export default new ApolloServer({
+  schema,
+  context(ctx) {
+    return ctx
+  },
+}).createHandler({
   path: '/api',
 });

@@ -30,14 +30,14 @@ const Signup = () => {
   const [checkPasswordInvalid, setCheckPasswordInvalid] = useState(false);
 
   // use gql mutation
-  const [signUp] = useMutation(SignUpMutation);
+  const [signupUserMutation] = useMutation(SignUpMutation);
 
   // handle signing up a user
   const handleSubmit = async () => {
     event.preventDefault();
 
     try {
-      await signUp({
+      await signupUserMutation({
         variables: {
           email: email,
           password: password,
@@ -46,6 +46,7 @@ const Signup = () => {
 
       console.log('success!');
     } catch (error) {
+      console.log(error);
       console.log('something is wrong');
     }
   };

@@ -18,6 +18,7 @@ export const resolvers = {
         );
       }
     },
+
   },
   Mutation: {
     async signUp(_parent, args, _context, _info) {

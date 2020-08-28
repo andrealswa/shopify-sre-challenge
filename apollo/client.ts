@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
 
 let apolloClient;
 
@@ -19,9 +19,10 @@ function createIsomorphLink() {
 
 function createApolloClient() {
   return new ApolloClient({
-    ssrMode: typeof window === 'undefined',
-    link: createIsomorphLink(),
     cache: new InMemoryCache(),
+    link: createHttpLink({
+      uri: 'http://localhost:3000/api',
+    }),
   });
 }
 
