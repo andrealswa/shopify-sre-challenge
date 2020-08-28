@@ -80,6 +80,7 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     createDraft: NexusGenRootTypes['Post']; // Post!
     deletePost: NexusGenRootTypes['Post'] | null; // Post
+    loginUser: NexusGenRootTypes['User']; // User!
     publish: NexusGenRootTypes['Post'] | null; // Post
     signupUser: NexusGenRootTypes['User']; // User!
     uploadImage: NexusGenRootTypes['Image']; // Image!
@@ -96,7 +97,6 @@ export interface NexusGenFieldTypes {
     feed: NexusGenRootTypes['Post'][]; // [Post!]!
     filterPosts: NexusGenRootTypes['Post'][]; // [Post!]!
     getImages: string[]; // [String!]!
-    loginUser: NexusGenRootTypes['User']; // User!
     post: NexusGenRootTypes['Post']; // Post!
   }
   User: { // field return type
@@ -116,6 +116,10 @@ export interface NexusGenArgTypes {
     deletePost: { // args
       postId?: string | null; // String
     }
+    loginUser: { // args
+      email: string; // String!
+      password: string; // String!
+    }
     publish: { // args
       postId?: string | null; // String
     }
@@ -130,10 +134,6 @@ export interface NexusGenArgTypes {
   Query: {
     filterPosts: { // args
       searchString?: string | null; // String
-    }
-    loginUser: { // args
-      email: string; // String!
-      password: string; // String!
     }
     post: { // args
       postId: string; // String!

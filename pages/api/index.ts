@@ -125,57 +125,6 @@ const Query = objectType({
       },
     })
 
-    // authentication workflow is here
-    t.field('loginUser', {
-      type: 'User',
-      args: {
-        email: stringArg({ nullable: false }),
-        password: stringArg({ nullable: false })
-      },
-      resolve: async (_, args, ctx) => {
-
-        // Need to get the salt and hash from the database
-        const user = await prisma.user.findOne({ where: { email: String(args.email) } })
-
-        // Need to hash the input password, then compare that to the stored hash
-        const inputHash = crypto.pbkdf2Sync(args.password, user.salt, 1000, 64, 'sha512').toString('hex');
-        const passwordsMatch = user.hash === inputHash;
-
-        if (!passwordsMatch) {
-          // passwords do not match
-          return;
-        }
-
-        // Create the 'session' or content of the JWT token
-        const session = {
-          id: user.id,
-          email: user.email
-        }
-
-        // await setLoginSession(context.res, session)
-        const createdAt = Date.now()
-        const MAX_AGE = 60 * 60 * 8
-        const obj = { ...session, createdAt, maxAge: MAX_AGE }
-        const token = await Iron.seal(obj, process.env.TOKEN_SECRET, Iron.defaults)
-
-        // Then implement setTokenCookie(ctx.res, token )
-        const TOKEN_NAME = 'token'
-        const cookie = serialize(TOKEN_NAME, token, {
-          maxAge: MAX_AGE,
-          expires: new Date(Date.now() + MAX_AGE * 1000),
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          path: '/',
-          sameSite: 'lax',
-        })
-        ctx.res.setHeader('Set-Cookie', cookie)
-        // this marks the end of the auth token creation function chain
-
-        return prisma.user.findOne({
-          where: { email: String(args.email) }
-        })
-      }
-    })
 
     t.list.field('feed', {
       type: 'Post',
@@ -224,6 +173,58 @@ const Query = objectType({
 const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
+
+    // authentication workflow is here
+    t.field('loginUser', {
+      type: 'User',
+      args: {
+        email: stringArg({ nullable: false }),
+        password: stringArg({ nullable: false })
+      },
+      resolve: async (_, args, ctx) => {
+        // Need to get the salt and hash from the database
+        const user = await prisma.user.findOne({ where: { email: String(args.email) } })
+
+        // Need to hash the input password, then compare that to the stored hash
+        const inputHash = crypto.pbkdf2Sync(args.password, user.salt, 1000, 64, 'sha512').toString('hex');
+        const passwordsMatch = user.hash === inputHash;
+
+        if (!passwordsMatch) {
+          // passwords do not match
+          return;
+        }
+
+        // Create the 'session' or content of the JWT token
+        const session = {
+          id: user.id,
+          email: user.email
+        }
+
+        // await setLoginSession(context.res, session)
+        const createdAt = Date.now()
+        const MAX_AGE = 60 * 60 * 8
+        const obj = { ...session, createdAt, maxAge: MAX_AGE }
+        const token = await Iron.seal(obj, process.env.TOKEN_SECRET, Iron.defaults)
+
+        // Then implement setTokenCookie(ctx.res, token )
+        const TOKEN_NAME = 'token'
+        const cookie = serialize(TOKEN_NAME, token, {
+          maxAge: MAX_AGE,
+          expires: new Date(Date.now() + MAX_AGE * 1000),
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          path: '/',
+          sameSite: 'lax',
+        })
+        ctx.res.setHeader('Set-Cookie', cookie)
+        // this marks the end of the auth token creation function chain
+
+        return prisma.user.findOne({
+          where: { email: String(args.email) }
+        })
+      }
+    })
+
 
     // custom resolver for images from frontend
     t.field("uploadImage", {

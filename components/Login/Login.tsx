@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-import { gql } from '@apollo/client';
-import { useMutation, useApolloClient } from '@apollo/client';
+import { gql, useMutation, useApolloClient } from '@apollo/client';
 import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -10,38 +9,39 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import styles from './Login.module.css';
 
-const LoginMutation = gql`
-  mutation LoginMutation($email: String!, $password: String!) {
-    signupUser(input: { email: $email, password: $password }) {
-      user {
+const LOGIN = gql`
+  mutation LoginQuery($email: String!, $password: String!) {
+    loginUser(email: $email, password: $password) {
         id
         email
-      }
     }
   }
 `;
 
+
 const Login = () => {
   const client = useApolloClient();
-  const [login] = useMutation(LoginMutation);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const [emailInvalid, setEmailInvalid] = useState(false);
   const [passwordInvalid, setPasswordInvalid] = useState(false);
 
-  async function handleLogin(event) {
+  const [loginUser] = useMutation(LOGIN);
+
+  async function handleLogin() {
     try {
-      await client.resetStore();
-      const { data } = await login({
+      await loginUser({
         variables: {
           email: email,
           password: password,
         },
       });
+
       console.log('Login successful');
-      console.log(data);
-    } catch {
+    } catch (error) {
+      console.log(error);
       console.log('Error logging in');
     }
   }

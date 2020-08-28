@@ -21,6 +21,7 @@ input ImageInput {
 type Mutation {
   createDraft(authorEmail: String, content: String, title: String!): Post!
   deletePost(postId: String): Post
+  loginUser(email: String!, password: String!): User!
   publish(postId: String): Post
   signupUser(email: String!, password: String!): User!
   uploadImage(input: ImageInput!): Image!
@@ -39,7 +40,6 @@ type Query {
   feed: [Post!]!
   filterPosts(searchString: String): [Post!]!
   getImages: [String!]!
-  loginUser(email: String!, password: String!): User!
   post(postId: String!): Post!
 }
 
