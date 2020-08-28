@@ -9,13 +9,11 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import styles from './Signup.module.css';
 
-const SignUpMutation = gql`
+const SIGN_UP = gql`
   mutation SignUpMutation($email: String!, $password: String!) {
-    signupUser(input: { email: $email, password: $password }) {
-      user {
-        id
-        email
-      }
+    signupUser(email: $email, password: $password) {
+      id
+      email
     }
   }
 `;
@@ -30,14 +28,16 @@ const Signup = () => {
   const [checkPasswordInvalid, setCheckPasswordInvalid] = useState(false);
 
   // use gql mutation
-  const [signupUserMutation] = useMutation(SignUpMutation);
+  const [signupUser] = useMutation(SIGN_UP);
 
   // handle signing up a user
   const handleSubmit = async () => {
     event.preventDefault();
 
+    console.log(email)
+    console.log(password)
     try {
-      await signupUserMutation({
+      await signupUser({
         variables: {
           email: email,
           password: password,
