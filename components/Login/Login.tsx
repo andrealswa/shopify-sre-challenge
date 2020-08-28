@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { gql, useMutation, useApolloClient } from '@apollo/client';
+import { gql, useMutation, useApolloClient, useQuery } from '@apollo/client';
 import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -8,19 +8,24 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import styles from './Login.module.css';
+import { jsonwebtoken } from '../../apollo/client';
 
 const LOGIN = gql`
   mutation LoginQuery($email: String!, $password: String!) {
-    loginUser(email: $email, password: $password) {
-        id
-        email
-    }
+    loginUser(email: $email, password: $password)
   }
 `;
 
+const GET_JSON_WEB_TOKEN = gql`
+  query GetJsonWebToken {
+    jsonwebtoken @client
+  }
+`;
 
 const Login = () => {
   const client = useApolloClient();
+
+  const [webTokenStore, setWebTokenStore] = useState('')
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,16 +35,25 @@ const Login = () => {
 
   const [loginUser] = useMutation(LOGIN);
 
+  const { data } = useQuery(GET_JSON_WEB_TOKEN);
+
+
+  const getCachedData = async () => {
+    console.log(data)
+  }
+
   async function handleLogin() {
     try {
-      await loginUser({
+      const results = await loginUser({
         variables: {
           email: email,
           password: password,
         },
       });
-
-      console.log('Login successful');
+      console.log('A Login successful');
+      console.log(results)
+      console.log('Z Login successful');
+      setWebTokenStore(JSON.stringify(results))
     } catch (error) {
       console.log(error);
       console.log('Error logging in');
@@ -80,7 +94,6 @@ const Login = () => {
                 setEmail(e.target.value);
                 validateEmail(e.target.value);
               }}
-              id="standard-basic"
               label="Email"
             />
           </form>
@@ -94,7 +107,6 @@ const Login = () => {
                 setPassword(e.target.value);
                 validatePassword(e.target.value);
               }}
-              id="standard-basic"
               label="Password"
             />
           </form>
@@ -111,6 +123,8 @@ const Login = () => {
             >
               Log in
             </Button>
+            {webTokenStore && <div>{webTokenStore}</div>}
+            <Button onClick={getCachedData}>Get Cached Data</Button>
           </div>
         </CardContent>
       </Card>

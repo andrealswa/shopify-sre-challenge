@@ -81,7 +81,8 @@ export interface NexusGenFieldTypes {
     authGuard: boolean; // Boolean!
     createDraft: NexusGenRootTypes['Post']; // Post!
     deletePost: NexusGenRootTypes['Post'] | null; // Post
-    loginUser: NexusGenRootTypes['User']; // User!
+    loginUser: string; // String!
+    logoutUser: boolean; // Boolean!
     publish: NexusGenRootTypes['Post'] | null; // Post
     signupUser: NexusGenRootTypes['User']; // User!
     uploadImage: NexusGenRootTypes['Image']; // Image!

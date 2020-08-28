@@ -93,7 +93,6 @@ const Signup = () => {
                 setEmail(e.target.value);
                 validateEmail(e.target.value);
               }}
-              id="standard-basic"
               label="Email"
             />
           </form>
@@ -107,7 +106,6 @@ const Signup = () => {
                 setPassword(e.target.value);
                 validatePassword(e.target.value);
               }}
-              id="standard-basic"
               label="Password"
             />
           </form>
@@ -121,7 +119,6 @@ const Signup = () => {
                 setCheckPassword(e.target.value);
                 validateCheckPassword(e.target.value);
               }}
-              id="standard-basic"
               label="Verify Password"
             />
           </form>

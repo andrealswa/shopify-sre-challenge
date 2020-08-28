@@ -176,7 +176,7 @@ const Mutation = objectType({
 
     // authentication workflow is here
     t.field('loginUser', {
-      type: 'User',
+      type: 'String',
       args: {
         email: stringArg({ nullable: false }),
         password: stringArg({ nullable: false })
@@ -225,10 +225,20 @@ const Mutation = objectType({
 
         // this marks the end of the auth token creation function chain
 
-        return prisma.user.findOne({
-          where: { email: String(args.email) }
-        })
+        // prisma.user.findOne({
+        //   where: { email: String(args.email) }
+        // })
+
+        return "login user resolver"
       }
+    })
+
+    t.field("logoutUser", {
+      type: "Boolean",
+      resolve: (async (_, _input, ctx) => {
+        console.log(ctx.req.headers.cookie)
+        return true
+      })
     })
 
     t.field("authGuard", {
@@ -308,6 +318,7 @@ const Mutation = objectType({
         }
 
         console.log(location, key);
+        prisma.post
 
         return {
           id: location,

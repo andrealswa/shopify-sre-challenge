@@ -7,12 +7,10 @@ import { client } from '../apollo/client';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <div>
+    <ApolloProvider client={client}>
       <Navbar />
-      <ApolloProvider client={client}>
-        <Component {...pageProps} />
-      </ApolloProvider>
-    </div>
+      <Component {...pageProps} />
+    </ApolloProvider >
   );
 }
 
