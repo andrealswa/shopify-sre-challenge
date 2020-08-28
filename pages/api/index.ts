@@ -326,7 +326,7 @@ const Mutation = objectType({
         try {
           await prisma.image.create({
             data: {
-              url: location
+              url: location, privateImg: false
             }
           });
           console.log("added image to database")
@@ -334,8 +334,6 @@ const Mutation = objectType({
           console.log(error)
           console.log("error adding image to database")
         }
-
-
 
         return {
           id: location,
