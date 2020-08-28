@@ -318,7 +318,24 @@ const Mutation = objectType({
         }
 
         console.log(location, key);
-        prisma.post
+
+        // Now need to upload the image into the database with no id needed
+        // need to set the url to location for the upload
+
+        console.log("adding image to database...")
+        try {
+          await prisma.image.create({
+            data: {
+              url: location
+            }
+          });
+          console.log("added image to database")
+        } catch (error) {
+          console.log(error)
+          console.log("error adding image to database")
+        }
+
+
 
         return {
           id: location,
