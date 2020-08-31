@@ -2,6 +2,8 @@ import { gql, useQuery, useMutation } from '@apollo/client';
 import { Button, Card, CardMedia } from '@material-ui/core';
 
 import styles from './PrivateImageGallery.module.css';
+import Router from 'next/router'
+
 
 // Fetch images from backend with gql query and token.
 const GET_USER_IMAGES_QUERY = gql`
@@ -19,13 +21,14 @@ const TOGGLE_IMAGE = gql`
 export const PrivateImageGallery = (images: any) => {
   const [photoVisibility] = useMutation(TOGGLE_IMAGE)
 
-  const handlePhotoVisibility = (imgUrl) => {
-    photoVisibility({
+  const handlePhotoVisibility = async (imgUrl) => {
+    await photoVisibility({
       variables: {
         imgUrl: imgUrl,
         token: localStorage.getItem("token")
       }
-    })
+    });
+    Router.reload();
   }
 
   let userToken = 'asdasd';

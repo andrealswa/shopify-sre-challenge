@@ -258,6 +258,19 @@ const Mutation = objectType({
       resolve: async (_, { imgUrl, token }, ctx) => {
         console.log(imgUrl)
         console.log(token)
+        const decodedToken: any = jwt.verify(token, process.env.JWT_TOKEN_SECRET)
+        const fetchOneImg = await prisma.image.findOne({
+          where: {
+            url: imgUrl
+          }
+        })
+        await prisma.image.update({
+          where: {
+            url: imgUrl
+          }, data: {
+            privateImg: !fetchOneImg.privateImg
+          }
+        })
         return ""
       }
     })
