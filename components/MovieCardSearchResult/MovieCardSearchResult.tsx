@@ -23,6 +23,13 @@ export const MovieCardSearchResult = (props) => {
     // Cannot nominate film if 5 are already nominated.
     if (moviesListNominate.length >= 5) return;
 
+    // To check if already nominated
+    const filterResults = moviesListNominate.filter(movie => {
+      return movie.Title === props.movie.Title
+    })
+
+    if (filterResults.length !== 0) return
+
     // add current movie to nominations
     setMoviesListNominate([...moviesListNominate, props.movie]);
   };
@@ -32,19 +39,15 @@ export const MovieCardSearchResult = (props) => {
       <CardActionArea>
         <CardMedia
           className={styles.mediaCard}
-          image="/static/images/cards/contemplative-reptile.jpg"
-          title="Contemplative Reptile"
+          image={props.movie.Poster}
+          title={props.movie.Title}
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-            {props.movie.name}
-          </Typography>
-          <Typography gutterBottom variant="h5" component="h2">
-            Year: {props.movie.year}
+            {props.movie.Title}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            Lizards are a widespread group of squamate reptiles, with over 6,000
-            species, ranging across all continents except Antarctica
+            {props.movie.Year}
           </Typography>
         </CardContent>
       </CardActionArea>
@@ -56,3 +59,9 @@ export const MovieCardSearchResult = (props) => {
     </Card>
   );
 };
+
+// Poster: "https://m.media-amazon.com/images/M/MV5BMjIyZGU4YzUtNDkzYi00ZDRhLTljYzctYTMxMDQ4M2E0Y2YxXkEyXkFqcGdeQXVyNTIzOTk5ODM@._V1_SX300.jpg"
+// Title: "Harry Potter and the Deathly Hallows: Part 2"
+// Type: "movie"
+// Year: "2011"
+// imdbID: "tt1201607"
