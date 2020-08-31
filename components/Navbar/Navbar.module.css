@@ -8,7 +8,7 @@
 }
 
 .toolbarContainer {
-  background-color: #e57373;
+  background-color: #00bcd4;
   display: flex;
   justify-content: center;
 }
@@ -21,6 +21,30 @@
 .loginItem {
   margin-left: auto;
 }
+
 .signup {
   padding-left: 10px;
+}
+
+.drawerButton {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+@media(max-width: 700px) {
+  .desktopAppBar {
+    display: none;
+  }
+
+  .mobileToolbarContainer {
+    background-color: #00bcd4;
+  }
+
+}
+
+@media(min-width: 701px) {
+  .mobileAppBar {
+    display: none;
+  }
 }
