@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Button from '@material-ui/core/Button';
 import PublishRoundedIcon from '@material-ui/icons/PublishRounded';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
+//import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 // import Button from '@material-ui/core/Button';
 import { gql, useMutation } from '@apollo/client';
@@ -10,13 +10,12 @@ import { useDropzone } from "react-dropzone";
 import styles from "./ImageUpload.module.css"
 
 const UPLOAD_IMAGE = gql`
-  mutation UploadImage($input: ImageInput!) {
-    uploadImage(input: $input) {
+  mutation UploadImage($input: ImageInput!, $token: String!) {
+    uploadImage(input: $input, token: $token) {
       id
     }
   }
 `;
-
 
 export const ImageUpload = () => {
   const [uploadImage] = useMutation(UPLOAD_IMAGE);
@@ -26,26 +25,36 @@ export const ImageUpload = () => {
     setFiles([])
   }
 
-  const onDrop = useCallback(files => {
+  const onDrop = useCallback((files) => {
     const reader = new FileReader();
-    setFiles(files.map(file => Object.assign(file, {
-      preview: URL.createObjectURL(file)
-    })));
+    setFiles(
+      files.map((file) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      )
+    );
 
-    files.forEach(file => {
+    const token = localStorage.getItem('token')
+    files.forEach((file) => {
       reader.readAsDataURL(file);
       reader.onload = () => {
         console.log(reader.result)
-        uploadImage({ variables: { input: { path: reader.result } } });
+        uploadImage({
+          variables: {
+            input: { path: reader.result },
+            token: token,
+          }
+        });
       }
 
     });
   }, []);
-  const { getRootProps, getInputProps } = useDropzone({ accept: 'image/*', onDrop, maxSize: 208122 });
+  const { getRootProps, getInputProps } = useDropzone({ accept: 'image/*', onDrop, maxSize: 208122, });
 
 
 
-  const thumbs = files.map(file => (
+  const thumbs = files.map((file) => (
     <div className={styles.thumbsContainer}>
       <div className={styles.thumb} key={file.name}>
         <div className={styles.thumbInner}>
@@ -60,8 +69,10 @@ export const ImageUpload = () => {
 
   useEffect(() => () => {
     // Make sure to revoke the data uris to avoid memory leaks
-    files.forEach(file => URL.revokeObjectURL(file.preview));
-  }, [files]);
+    files.forEach((file) => URL.revokeObjectURL(file.preview));
+  },
+    [files]
+  );
 
   return (
     <section className="container">
@@ -69,7 +80,7 @@ export const ImageUpload = () => {
         <CardContent>
           <div className="inputImage" {...getRootProps({ className: 'dropzone' })}>
             <input {...getInputProps()} />
-            <Button variant="contained"> <PublishRoundedIcon /> Drag and drop some files here, or click to select files</Button>
+            <Button variant="contained">{' '} <PublishRoundedIcon /> Drag and drop some files here, or click to select files</Button>
           </div>
           <Button onClick={onDeleteImage} variant="contained">Remove all Images</Button>
           <aside className={styles.thumbsContainer}>

@@ -3,17 +3,16 @@ import { useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import TextField from '@material-ui/core/TextField';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import styles from './Signup.module.css';
+import { signedInVar } from '../../apollo/client';
 
 const SIGN_UP = gql`
   mutation SignUpMutation($email: String!, $password: String!) {
     signupUser(email: $email, password: $password) {
-      id
-      email
+      token
     }
   }
 `;
@@ -32,12 +31,12 @@ const Signup = () => {
 
   // handle signing up a user
   const handleSubmit = async () => {
-    event.preventDefault();
-
     console.log(email)
     console.log(password)
+    let token
+
     try {
-      await signupUser({
+      token = await signupUser({
         variables: {
           email: email,
           password: password,
@@ -49,6 +48,10 @@ const Signup = () => {
       console.log(error);
       console.log('something is wrong');
     }
+
+    console.log('token object: ' + JSON.stringify(token.data.signupUser.token));
+    localStorage.setItem('token', token.data.signupUser.token);
+    signedInVar({ signedInField: true, email: email });
   };
 
   const validateEmail = (email: string) => {

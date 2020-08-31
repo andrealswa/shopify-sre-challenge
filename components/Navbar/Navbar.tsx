@@ -1,108 +1,109 @@
-import { makeStyles } from '@material-ui/core/styles';
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import styles from './Navbar.module.css';
-import { gql, useMutation } from '@apollo/client';
-import Cookies from 'js-cookie';
-import { client } from '../../apollo/client';
+import { gql, useQuery } from '@apollo/client';
+import { client, signedInVar } from '../../apollo/client';
 
 
-const AUTH_GUARD = gql`
-  mutation {
-    authGuard
-  }
+const GET_SIGNED_IN = gql`
+query SignedIn {
+  signedInObject @client
+}
 `;
 
 export const Navbar = () => {
+  const { data, loading, error } = useQuery(GET_SIGNED_IN);
 
-  const [showProfile, setShowProfile] = useState(false)
-  const [authGuard] = useMutation(AUTH_GUARD)
-
-  useEffect(() => {
-    console.log("loaded navbar")
-    handleAuthGuard()
-  }, [])
-
+  // if signed in, show only logout.
+  // if not signed in, show only login and signup.
   const handleLogout = () => {
-    client.resetStore()
-    console.log("logged out")
+    localStorage.setItem('token', '');
+    client.resetStore();
+    signedInVar({ signedInField: false, email: '' });
+    console.log('logged out');
+  };
+
+  if (loading) {
+    return <div>loading...</div>;
   }
 
-  async function handleAuthGuard() {
-    try {
-      const authResult = await authGuard();
-      console.log('Route access successful');
-      if (authResult) {
-        setShowProfile(true);
-      }
-    } catch (error) {
-      console.log(error);
-      console.log('Error accessing route');
-      setShowProfile(false);
-    }
-  }
-
-
-  return (
-    <div>
-      <AppBar position="static">
-        <div className={styles.toolbarContainer}>
-          <Toolbar className={styles.toolbar}>
-            <Typography className={styles.menuItemSpace} variant="h6">
+  if (data)
+    return (
+      <div>
+        <AppBar position="static">
+          <div className={styles.toolbarContainer}>
+            <Toolbar className={styles.toolbar}>
               <Link href="/">
-                <a>Home</a>
+                <Typography className={styles.menuItemSpace} variant="h6">
+                  <a>Home</a>
+                </Typography>
               </Link>
-            </Typography>
-            <Typography variant="h6" className={styles.menuItemSpace}>
+
+              <Link href="/moviesearch">
+                <Typography variant="h6" className={styles.menuItemSpace}>
+                  <a>Movie Search</a>
+                </Typography>
+              </Link>
+
               <Link href="/imagerepository">
-                <a>Image Repository</a>
+                <Typography variant="h6" className={styles.menuItemSpace}>
+                  <a>Image Repository</a>
+                </Typography>
               </Link>
-            </Typography>
 
-            {showProfile &&
-              <Typography variant="h6" className={styles.menuItemSpace}>
+              {data.signedInObject.signedInField && (
                 <Link href="/imageupload">
-                  <a>My Images</a>
+                  <Typography variant="h6" className={styles.menuItemSpace}>
+                    <a>My Images</a>
+                  </Typography>
                 </Link>
-              </Typography>
-            }
+              )}
 
-            <div className={styles.loginItem}>
-              <span>
-                <Link href="/login">
-                  <a>
-                    <Button variant="contained" color="primary">
-                      Log in
-                    </Button>
-                  </a>
-                </Link>
-              </span>
-              <span className={styles.signup}>
-                <Link href="/signup">
-                  <a>
-                    <Button color="inherit">Sign up</Button>
-                  </a>
-                </Link>
-              </span>
-              <span>
-                <Link href="/">
-                  <a>
-                    <Button onClick={handleLogout} variant="contained" color="primary">
-                      Log out
-                    </Button>
-                  </a>
-                </Link>
-              </span>
-            </div>
-          </Toolbar>
-        </div>
-      </AppBar>
-    </div>
-  );
+              <div className={styles.loginItem}>
+                {!data.signedInObject.signedInField && (
+                  <span>
+                    <Link href="/login">
+                      <a>
+                        <Button variant="contained" color="primary">
+                          Log in
+                        </Button>
+                      </a>
+                    </Link>
+                  </span>
+                )}
+                {!data.signedInObject.signedInField && (
+                  <span className={styles.signup}>
+                    <Link href="/signup">
+                      <a>
+                        <Button color="inherit">Sign up</Button>
+                      </a>
+                    </Link>
+                  </span>
+                )}
+
+                {data.signedInObject.signedInField && (
+                  <span className={styles.displayEmail}>
+                    {data.signedInObject.email}
+                  </span>
+                )}
+                {data.signedInObject.signedInField && (
+                  <span>
+                    <Link href="/">
+                      <a>
+                        <Button onClick={handleLogout} variant="contained" color="primary">
+                          Log out
+                        </Button>
+                      </a>
+                    </Link>
+                  </span>
+                )}
+              </div>
+            </Toolbar>
+          </div>
+        </AppBar>
+      </div>
+    );
 };

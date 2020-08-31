@@ -8,17 +8,13 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import styles from './Login.module.css';
-import { jsonwebtoken } from '../../apollo/client';
+import { signedInVar } from '../../apollo/client';
 
 const LOGIN = gql`
-  mutation LoginQuery($email: String!, $password: String!) {
-    loginUser(email: $email, password: $password)
-  }
-`;
-
-const GET_JSON_WEB_TOKEN = gql`
-  query GetJsonWebToken {
-    jsonwebtoken @client
+  mutation LoginUser($email: String!, $password: String!) {
+    loginUser(email: $email, password: $password) {
+      token
+    }
   }
 `;
 
@@ -35,29 +31,28 @@ const Login = () => {
 
   const [loginUser] = useMutation(LOGIN);
 
-  const { data } = useQuery(GET_JSON_WEB_TOKEN);
-
-
-  const getCachedData = async () => {
-    console.log(data)
-  }
-
-  async function handleLogin() {
-    try {
-      const results = await loginUser({
-        variables: {
-          email: email,
-          password: password,
-        },
-      });
-      console.log('A Login successful');
-      console.log(results)
-      console.log('Z Login successful');
-      setWebTokenStore(JSON.stringify(results))
-    } catch (error) {
-      console.log(error);
-      console.log('Error logging in');
+  const handleLogin = async () => {
+    if (typeof window !== 'undefined') {
+      // ensure client has rendered view
+      console.log(localStorage.getItem('token'));
     }
+
+    const token = await loginUser({
+      variables: {
+        email: email,
+        password: password,
+      },
+    });
+
+    if (!token) {
+      console.log('Error logging in');
+      return;
+    }
+    console.log(token);
+
+    console.log('token object: ' + JSON.stringify(token.data.loginUser.token));
+    localStorage.setItem('token', token.data.loginUser.token);
+    signedInVar({ signedInField: true, email: email });
   }
 
   const validateEmail = (email: string) => {
@@ -123,8 +118,6 @@ const Login = () => {
             >
               Log in
             </Button>
-            {webTokenStore && <div>{webTokenStore}</div>}
-            <Button onClick={getCachedData}>Get Cached Data</Button>
           </div>
         </CardContent>
       </Card>

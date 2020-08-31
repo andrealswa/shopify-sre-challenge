@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.movieNominationListContainer {
+  margin-top: 50px;
+  margin-bottom: 20%;
+}

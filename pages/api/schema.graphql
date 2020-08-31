@@ -8,10 +8,10 @@ A date string, such as 2007-12-03, compliant with the `full-date` format outline
 scalar Date
 
 type Image {
-  format: String!
   id: ID!
-  publicId: String!
-  version: String!
+  privateImg: Boolean!
+  url: String!
+  userId: Int!
 }
 
 input ImageInput {
@@ -19,34 +19,22 @@ input ImageInput {
 }
 
 type Mutation {
-  authGuard: Boolean!
-  createDraft(authorEmail: String, content: String, title: String!): Post!
-  deletePost(postId: String): Post
-  loginUser(email: String!, password: String!): String!
-  logoutUser: Boolean!
-  publish(postId: String): Post
-  signupUser(email: String!, password: String!): User!
-  uploadImage(input: ImageInput!): Image!
-}
-
-type Post {
-  author: User
-  content: String
-  id: Int!
-  published: Boolean!
-  title: String!
+  loginUser(email: String!, password: String!): Token!
+  photoVisibility(imgUrl: String, token: String): String!
+  signupUser(email: String!, password: String!): Token!
+  uploadImage(input: ImageInput!, token: String!): Image!
 }
 
 type Query {
-  drafts: [Post!]!
-  feed: [Post!]!
-  filterPosts(searchString: String): [Post!]!
-  getImages: [String!]!
-  post(postId: String!): Post!
+  getAllUserImages(token: String): String!
+  getUserImages(token: String): String!
+}
+
+type Token {
+  token: String!
 }
 
 type User {
   email: String!
   id: Int!
-  posts: [Post!]!
 }
