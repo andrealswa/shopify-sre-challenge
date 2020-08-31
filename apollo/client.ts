@@ -1,10 +1,22 @@
 import { ApolloClient, InMemoryCache, makeVar } from '@apollo/client';
+import { Token } from 'graphql';
+import jwt from 'jsonwebtoken';
 
-export const jsonwebtoken = makeVar(5);
+let signedInField = false
+let email = ""
+if (typeof window !== 'undefined') {
+  const token = localStorage.getItem("token")
+  if (token) {
+    const decodedToken: any = jwt.decode(token)
+    console.log(decodedToken)
+    signedInField = true
+    email = decodedToken.email
+  }
+}
 
 export const signedInVar = makeVar({
-  signedInField: true,
-  email: 'cats@gmail.com',
+  signedInField: signedInField,
+  email: email,
 });
 
 export const client = new ApolloClient({
