@@ -12,6 +12,12 @@ const GET_USER_IMAGES_QUERY = gql`
   }
 `;
 
+const DELETE_IMAGES_QUERY = gql`
+  mutation DeleteImagesQuery($imgUrl: String, $token: String) {
+    deletePhoto(imgUrl: $imgUrl, token: $token)
+  }
+`;
+
 const TOGGLE_IMAGE = gql`
   mutation ToggleImageVisibility($imgUrl: String, $token: String) {
     photoVisibility(imgUrl: $imgUrl, token: $token) 
@@ -28,6 +34,16 @@ export const PrivateImageGallery = (images: any) => {
         token: localStorage.getItem("token")
       }
     });
+    Router.reload();
+  }
+  const [deletePhoto] = useMutation(DELETE_IMAGES_QUERY)
+  const handleDeletePhoto = async (imgUrl) => {
+    await deletePhoto({
+      variables: {
+        imgUrl: imgUrl,
+        token: localStorage.getItem("token")
+      }
+    })
     Router.reload();
   }
 
@@ -69,7 +85,7 @@ export const PrivateImageGallery = (images: any) => {
                   Visibility: Public <Button onClick={() => handlePhotoVisibility(image.url)}>Make Private</Button>
                 </div>
               )}
-              <Button>Delete Image</Button>
+              <Button onClick={() => handleDeletePhoto(image.url)}>Delete Image</Button>
             </Card>
           </div>
         );

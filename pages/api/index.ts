@@ -274,6 +274,30 @@ const Mutation = objectType({
         return ""
       }
     })
+
+    t.field('deletePhoto', {
+      type: 'String',
+      args: {
+        imgUrl: stringArg(),
+        token: stringArg()
+      },
+      resolve: async (_, { imgUrl, token }, ctx) => {
+        console.log(imgUrl)
+        console.log(token)
+        const decodedToken: any = jwt.verify(token, process.env.JWT_TOKEN_SECRET)
+        const fetchOneImg = await prisma.image.findOne({
+          where: {
+            url: imgUrl
+          }
+        })
+        await prisma.image.delete({
+          where: {
+            url: imgUrl
+          }
+        })
+        return ""
+      }
+    })
   },
 });
 

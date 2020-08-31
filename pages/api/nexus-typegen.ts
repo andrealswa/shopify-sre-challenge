@@ -75,6 +75,7 @@ export interface NexusGenFieldTypes {
     userId: number; // Int!
   }
   Mutation: { // field return type
+    deletePhoto: string; // String!
     loginUser: NexusGenRootTypes['Token']; // Token!
     photoVisibility: string; // String!
     signupUser: NexusGenRootTypes['Token']; // Token!
@@ -95,6 +96,10 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    deletePhoto: { // args
+      imgUrl?: string | null; // String
+      token?: string | null; // String
+    }
     loginUser: { // args
       email: string; // String!
       password: string; // String!

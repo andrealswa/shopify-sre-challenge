@@ -19,6 +19,7 @@ input ImageInput {
 }
 
 type Mutation {
+  deletePhoto(imgUrl: String, token: String): String!
   loginUser(email: String!, password: String!): Token!
   photoVisibility(imgUrl: String, token: String): String!
   signupUser(email: String!, password: String!): Token!
