@@ -32,7 +32,6 @@ const Signup = () => {
   // handle signing up a user
   const handleSubmit = async () => {
     console.log(email)
-    console.log(password)
     let token
 
     try {

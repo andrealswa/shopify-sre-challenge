@@ -1,7 +1,15 @@
 .rootCard {
   max-width: 350px;
+  margin: 5px
 }
 
 .mediaCard {
-  height: 140px;
+
+  height: 350px;
+  width: 200px;
+}
+
+.centerImage {
+  display: flex;
+  justify-content: center;
 }

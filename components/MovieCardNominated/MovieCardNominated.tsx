@@ -25,11 +25,13 @@ export const MovieCardNominated = (props) => {
   return (
     <Card className={styles.rootCard}>
       <CardActionArea>
-        <CardMedia
-          className={styles.mediaCard}
-          image={props.movie.Poster}
-          title={props.movie.Title}
-        />
+        <div className={styles.centerImage}>
+          <CardMedia
+            className={styles.mediaCard}
+            image={props.movie.Poster}
+            title={props.movie.Title}
+          />
+        </div>
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             {props.movie.Title}

@@ -8,8 +8,8 @@ export const MovieNominationList = () => {
   const [moviesList, setMoviesList] = useRecoilState(moviesListNominatedState);
 
   return (
-    <div>
-      Movie Nomination List
+    <div><h1>
+      Movie Nomination List</h1>
       <div className={styles.container}>
         {moviesList.map((movie, key) => {
           return <MovieCardNominated movie={movie} key={key} />;

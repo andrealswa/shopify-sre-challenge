@@ -2,6 +2,7 @@ import { moviesListSearchedState } from '../../lib/recoil-atoms';
 import { useRecoilState } from 'recoil';
 import axios from "axios"
 
+import Pagination from '@material-ui/lab/Pagination';
 import styles from './MovieSearchList.module.css';
 import { MovieCardSearchResult } from '../MovieCardSearchResult/MovieCardSearchResult';
 import { TextField } from '@material-ui/core';
@@ -37,8 +38,13 @@ export const MovieSearchList = () => {
           label="Movie Search"
           variant="outlined"
         />
+
       </div>
-      Movie Search list
+      <div className={styles.searchBarContainer}><Pagination count={10} color="primary" /></div>
+
+      <h1>
+        Movie Search list
+        </h1>
       <div className={styles.container}>
         {moviesList.map((movie, key) => {
           return <MovieCardSearchResult movie={movie} key={key} />;

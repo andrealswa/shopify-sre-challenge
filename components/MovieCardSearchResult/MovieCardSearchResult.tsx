@@ -11,6 +11,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import StarRoundedIcon from '@material-ui/icons/StarRounded';
 
 import styles from './MovieCardSearchResult.module.css';
 
@@ -37,11 +38,13 @@ export const MovieCardSearchResult = (props) => {
   return (
     <Card className={styles.rootCard}>
       <CardActionArea>
-        <CardMedia
-          className={styles.mediaCard}
-          image={props.movie.Poster}
-          title={props.movie.Title}
-        />
+        <div className={styles.centerImage}>
+          <CardMedia
+            className={styles.mediaCard}
+            image={props.movie.Poster}
+            title={props.movie.Title}
+          />
+        </div>
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             {props.movie.Title}
@@ -52,11 +55,11 @@ export const MovieCardSearchResult = (props) => {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button onClick={handleNomination} size="small" color="primary">
+        <Button onClick={handleNomination} size="small"><StarRoundedIcon />
           Nominate
         </Button>
       </CardActions>
-    </Card>
+    </Card >
   );
 };
 

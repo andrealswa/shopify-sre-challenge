@@ -8,3 +8,10 @@
   margin-top: 50px;
   margin-bottom: 20%;
 }
+
+.alert {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  
+}

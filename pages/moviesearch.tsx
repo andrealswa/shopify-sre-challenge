@@ -14,7 +14,7 @@ const movieSearch = () => {
 
   return (
     <div className={styles.container}>
-      {moviesNominated.length >= 5 && <Alert severity="success">You have nominated 5 movies</Alert>
+      {moviesNominated.length >= 5 && <Alert className={styles.alert} severity="success">You have nominated 5 movies</Alert>
       }
       <h1>Search for and Nominate Movies</h1>
       <div>
