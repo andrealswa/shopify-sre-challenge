@@ -78,7 +78,7 @@ export const ImageUpload = () => {
 
   return (
     <section className="container">
-      <h1 className={styles.alignText}>Upload an Image</h1>
+      <div className={styles.titleAlign}><h1 className={styles.alignText}>Upload An Image Of Your Favourite Movie Snacks <span className={styles.moveEmoji} aria-label="a party" role="img">🎉</span></h1></div>
       <Card className={styles.root}>
         <CardContent>
           <div className={styles.inputImage} {...getRootProps({ className: 'dropzone' })}>

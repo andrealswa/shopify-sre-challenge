@@ -66,3 +66,13 @@
 .alignText {
   text-align: center;
 }
+
+.titleAlign {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.moveEmoji {
+  width: 10px !important;
+}
