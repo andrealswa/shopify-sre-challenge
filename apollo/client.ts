@@ -20,14 +20,9 @@ export const signedInVar = makeVar({
   email: email,
 });
 
-let uri = "https://shopify-sre-challenge.vercel.app/api";
-const onMachine = process.env.ON_LOCAL_MACHINE + ""
-if (onMachine.localeCompare('TRUE') === 0) {
-  uri = "http://localhost:3000/api"
-}
 
 export const client = new ApolloClient({
-  uri: uri,
+  uri: "https://shopify-sre-challenge.vercel.app",
   cache: new InMemoryCache({
     typePolicies: {
       Query: {

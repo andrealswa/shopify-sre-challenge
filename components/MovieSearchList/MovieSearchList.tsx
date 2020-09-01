@@ -41,9 +41,9 @@ export const MovieSearchList = () => {
       </div>
 
 
-      <h1>
+      {moviesList.length > 0 && <h1>
         Movie Search list
-        </h1>
+        </h1>}
       <div className={styles.container}>
         {moviesList.map((movie, key) => {
           return <MovieCardSearchResult movie={movie} key={key} />;

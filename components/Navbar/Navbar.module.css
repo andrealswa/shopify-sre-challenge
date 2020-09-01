@@ -32,7 +32,7 @@
   align-items: center;
 }
 
-@media(max-width: 700px) {
+@media(max-width: 1000px) {
   .desktopAppBar {
     display: none;
   }
@@ -43,7 +43,7 @@
 
 }
 
-@media(min-width: 701px) {
+@media(min-width: 1001px) {
   .mobileAppBar {
     display: none;
   }

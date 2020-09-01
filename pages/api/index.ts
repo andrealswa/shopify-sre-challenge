@@ -57,7 +57,8 @@ const Query = objectType({
         token: stringArg(),
       },
       resolve: async (_, { token }, ctx) => {
-        const images = await prisma.image.findMany();
+        const verifyToken: any = jwt.verify(token, process.env.JWT_TOKEN_SECRET)
+        const images = await prisma.image.findMany({ where: { userEmail: verifyToken.email } });
         const string_images = JSON.stringify(images);
         console.log(JSON.parse(string_images));
 

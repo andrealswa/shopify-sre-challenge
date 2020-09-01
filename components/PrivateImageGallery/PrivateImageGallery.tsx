@@ -75,17 +75,27 @@ export const PrivateImageGallery = (images: any) => {
                   title="Picture"
                 />
               </div>
-              {image.privateImg && (
-                <div>
-                  Visibility: Private <Button onClick={() => handlePhotoVisibility(image.url)}>Make Public</Button>
-                </div>
-              )}
-              {!image.privateImg && (
-                <div>
-                  Visibility: Public <Button onClick={() => handlePhotoVisibility(image.url)}>Make Private</Button>
-                </div>
-              )}
-              <Button onClick={() => handleDeletePhoto(image.url)}>Delete Image</Button>
+              <div className={styles.visibility}>
+                {image.privateImg && (
+                  <div>
+                    Visibility: Private
+                  </div>
+                )}
+                {!image.privateImg && (
+                  <div>
+                    Visibility: Public
+                  </div>
+                )}
+              </div>
+              <div className={styles.buttons}>
+                {image.privateImg && (
+                  <Button onClick={() => handlePhotoVisibility(image.url)}>Make Public</Button>
+                )}
+                {!image.privateImg && (
+                  <Button onClick={() => handlePhotoVisibility(image.url)}>Make Private</Button>
+                )}
+                <Button onClick={() => handleDeletePhoto(image.url)}>Delete Image</Button>
+              </div>
             </Card>
           </div>
         );

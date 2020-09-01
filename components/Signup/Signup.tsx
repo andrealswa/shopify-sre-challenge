@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Router from 'next/router'
 
 import { gql, useMutation } from '@apollo/client';
 import TextField from '@material-ui/core/TextField';
@@ -57,7 +58,7 @@ const Signup = () => {
       localStorage.setItem('token', token.data.signupUser.token);
       signedInVar({ signedInField: true, email: email });
     }
-
+    Router.push("/imageupload")
   };
 
   const validateEmail = (email: string) => {

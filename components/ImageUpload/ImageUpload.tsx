@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Button from '@material-ui/core/Button';
 import PublishRoundedIcon from '@material-ui/icons/PublishRounded';
 import Card from '@material-ui/core/Card';
+import Router from 'next/router'
 //import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 // import Button from '@material-ui/core/Button';
@@ -25,7 +26,7 @@ export const ImageUpload = () => {
     setFiles([])
   }
 
-  const onDrop = useCallback((files) => {
+  const onDrop = useCallback(async (files) => {
     const reader = new FileReader();
     setFiles(
       files.map((file) =>
@@ -36,11 +37,11 @@ export const ImageUpload = () => {
     );
 
     const token = localStorage.getItem('token')
-    files.forEach((file) => {
-      reader.readAsDataURL(file);
-      reader.onload = () => {
+    await files.forEach(async (file) => {
+      await reader.readAsDataURL(file);
+      reader.onload = async () => {
         console.log(reader.result)
-        uploadImage({
+        await uploadImage({
           variables: {
             input: { path: reader.result },
             token: token,
@@ -49,8 +50,9 @@ export const ImageUpload = () => {
       }
 
     });
+    Router.reload()
   }, []);
-  const { getRootProps, getInputProps } = useDropzone({ accept: 'image/*', onDrop, maxSize: 208122, });
+  const { getRootProps, getInputProps } = useDropzone({ accept: 'image/*', onDrop, maxSize: 500122, });
 
 
 
@@ -76,20 +78,19 @@ export const ImageUpload = () => {
 
   return (
     <section className="container">
+      <h1 className={styles.alignText}>Upload an Image</h1>
       <Card className={styles.root}>
         <CardContent>
-          <div className="inputImage" {...getRootProps({ className: 'dropzone' })}>
+          <div className={styles.inputImage} {...getRootProps({ className: 'dropzone' })}>
             <input {...getInputProps()} />
-            <Button variant="contained">{' '} <PublishRoundedIcon /> Drag and drop some files here, or click to select files</Button>
+            <Button className={styles.button} variant="contained"><div><div ><PublishRoundedIcon className={styles.icon} /> </div><div>Drag and drop one photo at a time here / click to select photo</div><div className={styles.smallText}>Images must be 500KB or less</div></div></Button>
           </div>
-          <Button onClick={onDeleteImage} variant="contained">Remove all Images</Button>
           <aside className={styles.thumbsContainer}>
             {thumbs}
           </aside>
         </CardContent>
       </Card>
 
-      <Button variant="contained">Submit</Button>
 
 
     </section>

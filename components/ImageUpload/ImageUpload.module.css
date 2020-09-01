@@ -1,3 +1,11 @@
+.root {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  padding: 10px;
+  background-color: red;
+}
+
 .thumbsContainer {
   display: 'flex';
   flex-direction: 'row';
@@ -39,5 +47,22 @@
   display: flex;
   justify-content: center;
   min-height: 30px;
+}
 
+.button {
+  padding: 50px !important;
+}
+
+.icon {
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.smallText {
+  font-weight: 400;
+  color: rgba(83, 81, 81, 0.795)
+}
+
+.alignText {
+  text-align: center;
 }

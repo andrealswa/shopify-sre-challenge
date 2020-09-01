@@ -1,9 +1,5 @@
 .cardWrapper {
-  padding: 50px;
-  margin: 50px;
-  width: 100%;
-  max-width: 400px;
-  height: 500px;
+  margin: 10px;
 }
 
 .card {
@@ -15,6 +11,12 @@
 
 .container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   width: 100%;
+}
+
+.centerTitle {
+  display: flex;
+  justify-content: center;
 }

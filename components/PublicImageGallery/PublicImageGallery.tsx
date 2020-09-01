@@ -18,25 +18,29 @@ export const PublicImageGallery = (images: any) => {
   const userImages = JSON.parse(data.getAllUserImages);
 
   return (
-    <div className={styles.container}>
-
-      {userImages.map((image, key) => {
-        return (
-          <div key={key} className={styles.cardWrapper}>
-            <Card className={styles.card} key={key}>
-              <div>
-                <CardMedia
-                  component="img"
-                  alt="Picture"
-                  height="300"
-                  image={image.url}
-                  title="Picture"
-                />
-              </div>
-            </Card>
-          </div>
-        );
-      })}
+    <div>
+      <div className={styles.centerTitle}>
+        <h1>Image Gallery</h1>
+      </div>
+      <div className={styles.container}>
+        {userImages.map((image, key) => {
+          return (
+            <div key={key} className={styles.cardWrapper}>
+              <Card className={styles.card} key={key}>
+                <div>
+                  <CardMedia
+                    component="img"
+                    alt="Picture"
+                    height="300"
+                    image={image.url}
+                    title="Picture"
+                  />
+                </div>
+              </Card>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
