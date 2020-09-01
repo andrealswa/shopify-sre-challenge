@@ -20,8 +20,7 @@ export const signedInVar = makeVar({
 });
 
 export const client = new ApolloClient({
-  uri: 'http://localhost:3000/api',
-
+  uri: 'https://shopify-sre-challenge.vercel.app/api',
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
