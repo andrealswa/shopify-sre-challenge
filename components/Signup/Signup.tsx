@@ -48,9 +48,16 @@ const Signup = () => {
       console.log('something is wrong');
     }
 
-    console.log('token object: ' + JSON.stringify(token.data.signupUser.token));
-    localStorage.setItem('token', token.data.signupUser.token);
-    signedInVar({ signedInField: true, email: email });
+    if (!token) {
+      console.log("Error, no data return payload, unable to sign in.")
+    }
+
+    if (token) {
+      console.log('token object: ' + JSON.stringify(token.data.signupUser.token));
+      localStorage.setItem('token', token.data.signupUser.token);
+      signedInVar({ signedInField: true, email: email });
+    }
+
   };
 
   const validateEmail = (email: string) => {
