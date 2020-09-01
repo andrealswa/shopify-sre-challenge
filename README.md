@@ -15,12 +15,12 @@ For Image Repository, to view all images simply click on the Image Repository bu
 
 ## Technologies Used:
 
-Nextjs (with React)
-Apollo Client and Server (with GraphQL)
-Recoil (State management)
-Prisma (Database Toolkit and ORM)
-Nexus (GraphQL Typing)
-JSON Web Token Authentication
-Google Cloud SQL (Postgresql Database)
-AWS S3 Bucket (Image Hosting)
-Axios (REST API requests)
+- Nextjs (with React)
+- Apollo Client and Server (with GraphQL)
+- Recoil (State management)
+- Prisma (Database Toolkit and ORM)
+- Nexus (GraphQL Typing)
+- JSON Web Token Authentication
+- Google Cloud SQL (Postgresql Database)
+- AWS S3 Bucket (Image Hosting)
+- Axios (REST API requests)
