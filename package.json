@@ -40,6 +40,7 @@
     "react-images-uploading": "^3.0.0",
     "react-material-ui-form-validator": "^2.1.1",
     "recoil": "^0.0.10",
+    "ts-node": "^9.0.0",
     "uuid": "^8.3.0"
   },
   "devDependencies": {
