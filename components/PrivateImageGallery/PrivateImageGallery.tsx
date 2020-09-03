@@ -6,9 +6,16 @@ import Router from 'next/router'
 
 
 // Fetch images from backend with gql query and token.
-const GET_USER_IMAGES_QUERY = gql`
-  query GetUserImagesQuery($token: String!) {
-    getUserImages(token: $token)
+const GET_USER_QUERY = gql`
+  query GetUser($token: String!) {
+    getUser(token: $token) {
+      images {
+        id
+        url
+        privateImg
+        userId
+      }
+    }
   }
 `;
 
@@ -25,8 +32,8 @@ const TOGGLE_IMAGE = gql`
 `;
 
 export const PrivateImageGallery = (images: any) => {
-  const [photoVisibility] = useMutation(TOGGLE_IMAGE)
 
+  const [photoVisibility] = useMutation(TOGGLE_IMAGE)
   const handlePhotoVisibility = async (imgUrl) => {
     await photoVisibility({
       variables: {
@@ -34,8 +41,11 @@ export const PrivateImageGallery = (images: any) => {
         token: localStorage.getItem("token")
       }
     });
-    Router.reload();
+    // For GET_USER_QUERY useQuery
+    refetch()
+
   }
+
   const [deletePhoto] = useMutation(DELETE_IMAGES_QUERY)
   const handleDeletePhoto = async (imgUrl) => {
     await deletePhoto({
@@ -44,63 +54,75 @@ export const PrivateImageGallery = (images: any) => {
         token: localStorage.getItem("token")
       }
     })
-    Router.reload();
+    // For GET_USER_QUERY useQuery
+    refetch()
   }
 
-  let userToken = 'asdasd';
+  let userToken = '';
   if (typeof window !== 'undefined') {
     userToken = localStorage.getItem('token');
   }
-  const { data, loading, error } = useQuery(GET_USER_IMAGES_QUERY, {
+
+  const { data, loading, error, refetch } = useQuery(GET_USER_QUERY, {
     variables: { token: userToken },
   });
+
+  if (error) return <div>Error :(</div>
+
   if (loading) return <div>Loading...</div>;
 
-  // The data is encapsulated in a JSON.stringify call
-  // so we need to decapsulate it with JSON.parse
-  const parsedData = JSON.parse(data.getUserImages);
+  console.log(data.getUser.images)
 
-  return (
-    <div className={styles.container}>
-      {parsedData.map((image, key) => {
-        return (
-          <div key={key} className={styles.cardWrapper}>
-            <Card className={styles.card} key={key}>
-              <div>
-                <CardMedia
-                  component="img"
-                  alt="Picture"
-                  height="300"
-                  image={image.url}
-                  title="Picture"
-                />
-              </div>
-              <div className={styles.visibility}>
-                {image.privateImg && (
-                  <div>
-                    Visibility: Private
-                  </div>
-                )}
-                {!image.privateImg && (
-                  <div>
-                    Visibility: Public
-                  </div>
-                )}
-              </div>
-              <div className={styles.buttons}>
-                {image.privateImg && (
-                  <Button onClick={() => handlePhotoVisibility(image.url)}>Make Public</Button>
-                )}
-                {!image.privateImg && (
-                  <Button onClick={() => handlePhotoVisibility(image.url)}>Make Private</Button>
-                )}
-                <Button onClick={() => handleDeletePhoto(image.url)}>Delete Image</Button>
-              </div>
-            </Card>
-          </div>
-        );
-      })}
-    </div>
-  );
+  if (data) {
+    // Custom sort to ensure that entires don't move around when privateImg is updated.
+    const sortedImages = [...data.getUser.images]
+    sortedImages.sort((x, y) => {
+      if (x.id > y.id) return 1
+      else return -1
+    })
+
+    return (
+      <div className={styles.container}>
+        {sortedImages.map((image, key) => {
+          return (
+            <div key={key} className={styles.cardWrapper}>
+              <Card className={image.privateImg ? styles.cardPrivate : styles.card} key={key}>
+                <div>
+                  <CardMedia
+                    component="img"
+                    alt="Picture"
+                    height="300"
+                    image={image.url}
+                    title="Picture"
+                  />
+                </div>
+                <div className={styles.visibility}>
+                  {image.privateImg && (
+                    <div>
+                      Visibility: Private
+                    </div>
+                  )}
+                  {!image.privateImg && (
+                    <div>
+                      Visibility: Public
+                    </div>
+                  )}
+                </div>
+                <div className={styles.buttons}>
+                  {image.privateImg && (
+                    <Button onClick={() => handlePhotoVisibility(image.url)}>Make Public</Button>
+                  )}
+                  {!image.privateImg && (
+                    <Button onClick={() => handlePhotoVisibility(image.url)}>Make Private</Button>
+                  )}
+                  <Button onClick={() => handleDeletePhoto(image.url)}>Delete Image</Button>
+                </div>
+              </Card>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 };
 

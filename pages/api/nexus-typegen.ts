@@ -41,7 +41,7 @@ export interface NexusGenScalars {
 
 export interface NexusGenRootTypes {
   Image: { // root type
-    id: string; // ID!
+    id: number; // Int!
     privateImg: boolean; // Boolean!
     url: string; // String!
     userId: number; // Int!
@@ -69,7 +69,7 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
 
 export interface NexusGenFieldTypes {
   Image: { // field return type
-    id: string; // ID!
+    id: number; // Int!
     privateImg: boolean; // Boolean!
     url: string; // String!
     userId: number; // Int!
@@ -83,7 +83,7 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     getAllUserImages: string; // String!
-    getUserImages: string; // String!
+    getUser: NexusGenRootTypes['User']; // User!
   }
   Token: { // field return type
     token: string; // String!
@@ -91,6 +91,7 @@ export interface NexusGenFieldTypes {
   User: { // field return type
     email: string; // String!
     id: number; // Int!
+    images: NexusGenRootTypes['Image'][]; // [Image!]!
   }
 }
 
@@ -121,7 +122,7 @@ export interface NexusGenArgTypes {
     getAllUserImages: { // args
       token?: string | null; // String
     }
-    getUserImages: { // args
+    getUser: { // args
       token?: string | null; // String
     }
   }

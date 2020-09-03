@@ -9,6 +9,13 @@
   background-color: rgb(238, 238, 238) !important;
 }
 
+.cardPrivate {
+  width: 100%;
+  max-width: 400px;
+  height: 380px;
+  background-color: rgb(200, 200, 200) !important;
+}
+
 .container {
   display: flex;
   flex-wrap: wrap;

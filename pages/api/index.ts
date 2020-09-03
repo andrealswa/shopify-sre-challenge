@@ -19,7 +19,7 @@ const prisma = new PrismaClient()
 const Image = objectType({
   name: "Image",
   definition(t) {
-    t.id("id");
+    t.int("id");
     t.string("url");
     t.boolean('privateImg');
     t.int('userId');
@@ -45,26 +45,29 @@ const User = objectType({
   definition(t) {
     t.int('id')
     t.string('email')
-  },
+    t.list.field('images', {
+      type: Image,
+      resolve: (parent) => prisma.user.findOne({ where: { id: parent.id } }).images()
+    })
+  }
 })
 
 const Query = objectType({
   name: 'Query',
   definition(t) {
-    t.field('getUserImages', {
-      type: 'String',
+    t.field('getUser', {
+      type: User,
       args: {
         token: stringArg(),
       },
-      resolve: async (_, { token }, ctx) => {
+      resolve: async (_, { token }) => {
+        // Authorization
         const verifyToken: any = jwt.verify(token, process.env.JWT_TOKEN_SECRET)
-        const images = await prisma.image.findMany({ where: { userEmail: verifyToken.email } });
-        const string_images = JSON.stringify(images);
-        console.log(JSON.parse(string_images));
-
-        return string_images;
+        const user = await prisma.user.findOne({ where: { email: verifyToken.email } });
+        return user
       },
     })
+
 
     t.field('getAllUserImages', {
       type: 'String',
@@ -167,8 +170,22 @@ const Mutation = objectType({
               url: location,
               privateImg: false,
               userEmail: decoded_token.email, // applied any type, no time to write interface
+              User: {
+                connect: { id: decoded_token.id }
+              }
             },
           });
+
+          // model Image {
+          //   id         Int     @default(autoincrement()) @id
+          //   url        String  @unique
+          //   privateImg Boolean @default(true)
+          //   userEmail  String
+          //   User       User?   @relation(fields: [userId], references: [id])
+          //   userId     Int?
+          // }
+
+
           console.log('added image to database');
         } catch (error) {
           console.log(error);
@@ -176,7 +193,7 @@ const Mutation = objectType({
         }
 
         return {
-          id: location,
+          id: 1,
           userId: 11,
           privateImg: false,
           url: 'www.goaway.com',

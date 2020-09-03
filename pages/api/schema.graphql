@@ -8,7 +8,7 @@ A date string, such as 2007-12-03, compliant with the `full-date` format outline
 scalar Date
 
 type Image {
-  id: ID!
+  id: Int!
   privateImg: Boolean!
   url: String!
   userId: Int!
@@ -28,7 +28,7 @@ type Mutation {
 
 type Query {
   getAllUserImages(token: String): String!
-  getUserImages(token: String): String!
+  getUser(token: String): User!
 }
 
 type Token {
@@ -38,4 +38,5 @@ type Token {
 type User {
   email: String!
   id: Int!
+  images: [Image!]!
 }

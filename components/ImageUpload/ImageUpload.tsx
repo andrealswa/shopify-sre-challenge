@@ -40,7 +40,7 @@ export const ImageUpload = () => {
     await files.forEach(async (file) => {
       await reader.readAsDataURL(file);
       reader.onload = async () => {
-        console.log(reader.result)
+        // console.log(reader.result)
         await uploadImage({
           variables: {
             input: { path: reader.result },
@@ -48,13 +48,11 @@ export const ImageUpload = () => {
           }
         });
       }
-
+      // Find way to remove this.
+      Router.reload();
     });
-    Router.reload()
   }, []);
   const { getRootProps, getInputProps } = useDropzone({ accept: 'image/*', onDrop, maxSize: 500122, });
-
-
 
   const thumbs = files.map((file) => (
     <div className={styles.thumbsContainer}>
@@ -90,12 +88,7 @@ export const ImageUpload = () => {
           </aside>
         </CardContent>
       </Card>
-
-
-
     </section>
-
-
   );
 };
 

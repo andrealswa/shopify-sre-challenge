@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "yarn prisma generate && next dev",
+    "dev": "yarn prisma generate && yarn migrate && next dev",
     "build": "next build",
     "start": "next start",
     "generate": "yarn -s run generate:prisma && yarn -s run generate:nexus",
