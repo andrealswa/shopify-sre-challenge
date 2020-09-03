@@ -65,6 +65,7 @@ export const PrivateImageGallery = (images: any) => {
 
   const { data, loading, error, refetch } = useQuery(GET_USER_QUERY, {
     variables: { token: userToken },
+    pollInterval: 1000,
   });
 
   if (error) return <div>Error :(</div>
