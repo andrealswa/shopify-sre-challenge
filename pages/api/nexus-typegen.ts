@@ -14,9 +14,6 @@ declare global {
 }
 
 export interface NexusGenInputs {
-  ImageInput: { // input type
-    path: string; // String!
-  }
 }
 
 export interface NexusGenEnums {
@@ -49,7 +46,6 @@ export interface NexusGenRootTypes {
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
-  ImageInput: NexusGenInputs['ImageInput'];
   String: NexusGenScalars['String'];
   Int: NexusGenScalars['Int'];
   Float: NexusGenScalars['Float'];
@@ -104,7 +100,7 @@ export interface NexusGenArgTypes {
       password: string; // String!
     }
     uploadImage: { // args
-      input: NexusGenInputs['ImageInput']; // ImageInput!
+      path: string; // String!
       token: string; // String!
     }
   }
@@ -125,7 +121,7 @@ export interface NexusGenInheritedFields {}
 
 export type NexusGenObjectNames = "Image" | "Mutation" | "Query" | "Token" | "User";
 
-export type NexusGenInputNames = "ImageInput";
+export type NexusGenInputNames = never;
 
 export type NexusGenEnumNames = never;
 

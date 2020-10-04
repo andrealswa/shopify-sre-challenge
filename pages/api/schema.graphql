@@ -9,16 +9,12 @@ type Image {
   userId: Int!
 }
 
-input ImageInput {
-  path: String!
-}
-
 type Mutation {
   deletePhoto(imgUrl: String, token: String): String!
   loginUser(email: String!, password: String!): Token!
   photoVisibility(imgUrl: String, token: String): String!
   signupUser(email: String!, password: String!): Token!
-  uploadImage(input: ImageInput!, token: String!): Image!
+  uploadImage(path: String!, token: String!): Image!
 }
 
 type Query {

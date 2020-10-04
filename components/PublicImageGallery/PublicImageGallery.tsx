@@ -12,7 +12,9 @@ const GET_ALL_IMAGES_QUERY = gql`
 `;
 
 export const PublicImageGallery = (images: any) => {
-  const { data, loading, error } = useQuery(GET_ALL_IMAGES_QUERY);
+  const { data, loading, error } = useQuery(GET_ALL_IMAGES_QUERY, {
+    pollInterval: 500, // Update every 500ms
+  });
   if (loading) return <div>Loading...</div>;
 
   const userImages = JSON.parse(data.getAllUserImages);
@@ -44,4 +46,3 @@ export const PublicImageGallery = (images: any) => {
     </div>
   );
 };
-
