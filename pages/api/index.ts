@@ -1,17 +1,9 @@
-import {
-  makeSchema,
-  objectType,
-  stringArg,
-  inputObjectType,
-  arg,
-} from '@nexus/schema';
+import { makeSchema, objectType } from '@nexus/schema';
 import { PrismaClient } from '@prisma/client';
 import { ApolloServer } from 'apollo-server-micro';
-
-import crypto from 'crypto';
 import path from 'path';
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+
 import { getUser, loginUser, signupUser, User } from './user';
 import {
   deletePhoto,
