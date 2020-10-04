@@ -2,27 +2,29 @@ import { ApolloClient, InMemoryCache, makeVar } from '@apollo/client';
 import { Token } from 'graphql';
 import jwt from 'jsonwebtoken';
 
-let signedInField = false
-let email = ""
+let signedInField = false;
+let email = '';
 if (typeof window !== 'undefined') {
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem('token');
   if (token) {
-    const decodedToken: any = jwt.decode(token)
-    console.log(decodedToken)
-    signedInField = true
-    email = decodedToken.email
+    const decodedToken: any = jwt.decode(token);
+    console.log(decodedToken);
+    signedInField = true;
+    email = decodedToken.email;
   }
 }
-
 
 export const signedInVar = makeVar({
   signedInField: signedInField,
   email: email,
 });
 
+const prod = process.env.NODE_ENV === 'production';
 
 export const client = new ApolloClient({
-  uri: "https://shopify-sre-challenge.vercel.app/api", //"http://localhost:3000/api", //
+  uri: prod
+    ? 'https://shopify-sre-challenge.vercel.app/api'
+    : 'https://localhost:3000/api', //"http://localhost:3000/api",
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
@@ -30,10 +32,10 @@ export const client = new ApolloClient({
           signedInObject: {
             read() {
               return signedInVar();
-            }
-          }
-        }
-      }
-    }
-  })
+            },
+          },
+        },
+      },
+    },
+  }),
 });

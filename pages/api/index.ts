@@ -1,36 +1,42 @@
-import { makeSchema, objectType, stringArg, asNexusMethod, inputObjectType, arg } from '@nexus/schema'
-import { GraphQLDate } from 'graphql-iso-date'
-import { PrismaClient } from '@prisma/client'
-import { ApolloServer } from 'apollo-server-micro'
-import { v4 as uuidv4 } from 'uuid'; // for unique images
-import crypto from 'crypto'; // for signupUser mutation
-import path from 'path'
-import aws from 'aws-sdk'
+import {
+  makeSchema,
+  objectType,
+  stringArg,
+  asNexusMethod,
+  inputObjectType,
+  arg,
+} from '@nexus/schema';
+import { GraphQLDate } from 'graphql-iso-date';
+import { PrismaClient } from '@prisma/client';
+import { ApolloServer } from 'apollo-server-micro';
+import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
+import path from 'path';
+import aws from 'aws-sdk';
 import jwt from 'jsonwebtoken';
 
+import dotenv from 'dotenv';
+dotenv.config();
 
-import dotenv from 'dotenv'
-dotenv.config()
+export const GQLDate = asNexusMethod(GraphQLDate, 'date');
 
-export const GQLDate = asNexusMethod(GraphQLDate, 'date')
-
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 const Image = objectType({
-  name: "Image",
+  name: 'Image',
   definition(t) {
-    t.int("id");
-    t.string("url");
+    t.int('id');
+    t.string('url');
     t.boolean('privateImg');
     t.int('userId');
-  }
+  },
 });
 
 const ImageInput = inputObjectType({
-  name: "ImageInput",
+  name: 'ImageInput',
   definition(t) {
-    t.string("path", { required: true });
-  }
+    t.string('path', { required: true });
+  },
 });
 
 const Token = objectType({
@@ -43,14 +49,15 @@ const Token = objectType({
 const User = objectType({
   name: 'User',
   definition(t) {
-    t.int('id')
-    t.string('email')
+    t.int('id');
+    t.string('email');
     t.list.field('images', {
       type: Image,
-      resolve: (parent) => prisma.user.findOne({ where: { id: parent.id } }).images()
-    })
-  }
-})
+      resolve: (parent) =>
+        prisma.user.findOne({ where: { id: parent.id } }).images(),
+    });
+  },
+});
 
 const Query = objectType({
   name: 'Query',
@@ -62,12 +69,16 @@ const Query = objectType({
       },
       resolve: async (_, { token }) => {
         // Authorization
-        const verifyToken: any = jwt.verify(token, process.env.JWT_TOKEN_SECRET)
-        const user = await prisma.user.findOne({ where: { email: verifyToken.email } });
-        return user
+        const verifyToken: any = jwt.verify(
+          token,
+          process.env.JWT_TOKEN_SECRET
+        );
+        const user = await prisma.user.findOne({
+          where: { email: verifyToken.email },
+        });
+        return user;
       },
-    })
-
+    });
 
     t.field('getAllUserImages', {
       type: 'String',
@@ -100,7 +111,7 @@ const Mutation = objectType({
           type: ImageInput,
           required: true,
         }),
-        token: stringArg({ nullable: false })
+        token: stringArg({ nullable: false }),
       },
       resolve: async (_, { input, token }, ctx) => {
         console.log('AT RESOLVER FOR UPLOAD IMAGE');
@@ -171,22 +182,10 @@ const Mutation = objectType({
               privateImg: false,
               userEmail: decoded_token.email, // applied any type, no time to write interface
               User: {
-                connect: { id: decoded_token.id }
-              }
+                connect: { id: decoded_token.id },
+              },
             },
           });
-
-          // model Image {
-          //   id         Int     @default(autoincrement()) @id
-          //   url        String  @unique
-          //   privateImg Boolean @default(true)
-          //   userEmail  String
-          //   User       User?   @relation(fields: [userId], references: [id])
-          //   userId     Int?
-          // }
-
-
-          console.log('added image to database');
         } catch (error) {
           console.log(error);
           console.log('error adding image to database');
@@ -196,12 +195,12 @@ const Mutation = objectType({
           id: 1,
           userId: 11,
           privateImg: false,
-          url: 'www.goaway.com',
+          url: location,
         };
       },
     });
 
-    t.field("loginUser", {
+    t.field('loginUser', {
       type: Token,
       args: {
         email: stringArg({ nullable: false }),
@@ -271,51 +270,58 @@ const Mutation = objectType({
       type: 'String',
       args: {
         imgUrl: stringArg(),
-        token: stringArg()
+        token: stringArg(),
       },
       resolve: async (_, { imgUrl, token }, ctx) => {
-        console.log(imgUrl)
-        console.log(token)
-        const decodedToken: any = jwt.verify(token, process.env.JWT_TOKEN_SECRET)
+        console.log(imgUrl);
+        console.log(token);
+        const decodedToken: any = jwt.verify(
+          token,
+          process.env.JWT_TOKEN_SECRET
+        );
         const fetchOneImg = await prisma.image.findOne({
           where: {
-            url: imgUrl
-          }
-        })
+            url: imgUrl,
+          },
+        });
         await prisma.image.update({
           where: {
-            url: imgUrl
-          }, data: {
-            privateImg: !fetchOneImg.privateImg
-          }
-        })
-        return ""
-      }
-    })
+            url: imgUrl,
+          },
+          data: {
+            privateImg: !fetchOneImg.privateImg,
+          },
+        });
+        return '';
+      },
+    });
 
     t.field('deletePhoto', {
       type: 'String',
       args: {
         imgUrl: stringArg(),
-        token: stringArg()
+        token: stringArg(),
       },
       resolve: async (_, { imgUrl, token }, ctx) => {
-        console.log(imgUrl)
-        console.log(token)
-        const decodedToken: any = jwt.verify(token, process.env.JWT_TOKEN_SECRET)
+        console.log(imgUrl);
+        console.log(token);
+        const decodedToken: any = jwt.verify(
+          token,
+          process.env.JWT_TOKEN_SECRET
+        );
         const fetchOneImg = await prisma.image.findOne({
           where: {
-            url: imgUrl
-          }
-        })
+            url: imgUrl,
+          },
+        });
         await prisma.image.delete({
           where: {
-            url: imgUrl
-          }
-        })
-        return ""
-      }
-    })
+            url: imgUrl,
+          },
+        });
+        return '';
+      },
+    });
   },
 });
 
@@ -335,7 +341,7 @@ export const config = {
 
 export default new ApolloServer({
   schema,
-  context({ req }) { },
+  context({ req }) {},
 }).createHandler({
   path: '/api',
 });
