@@ -6,7 +6,6 @@ import {
   inputObjectType,
   arg,
 } from '@nexus/schema';
-import { GraphQLDate } from 'graphql-iso-date';
 import { PrismaClient } from '@prisma/client';
 import { ApolloServer } from 'apollo-server-micro';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,14 +13,15 @@ import crypto from 'crypto';
 import path from 'path';
 import aws from 'aws-sdk';
 import jwt from 'jsonwebtoken';
-
 import dotenv from 'dotenv';
+
+// Allow use of root .env values.
 dotenv.config();
 
-export const GQLDate = asNexusMethod(GraphQLDate, 'date');
-
+// ORM api for backend to database.
 const prisma = new PrismaClient();
 
+// Image models for frontend to backend api the client can directly call upon.
 const Image = objectType({
   name: 'Image',
   definition(t) {
@@ -29,20 +29,6 @@ const Image = objectType({
     t.string('url');
     t.boolean('privateImg');
     t.int('userId');
-  },
-});
-
-const ImageInput = inputObjectType({
-  name: 'ImageInput',
-  definition(t) {
-    t.string('path', { required: true });
-  },
-});
-
-const Token = objectType({
-  name: 'Token',
-  definition(t) {
-    t.string('token');
   },
 });
 
@@ -59,6 +45,34 @@ const User = objectType({
   },
 });
 
+// These are models for the args of several resolvers.
+// These are probably not needed.
+const ImageInput = inputObjectType({
+  name: 'ImageInput',
+  definition(t) {
+    t.string('path', { required: true });
+  },
+});
+
+const Token = objectType({
+  name: 'Token',
+  definition(t) {
+    t.string('token');
+  },
+});
+
+// Helper function to check the validity of a token then extract and return its contents.
+const verifyAndDecodeToken = (token) => {
+  const decodedToken: any = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
+  if (!decodedToken) {
+    // Could write something like this to a log for analytics for the development team.
+    console.log('Unauthorized User Detected');
+    return;
+  }
+  return decodedToken;
+};
+
+// Queries for Frontend to Backend.
 const Query = objectType({
   name: 'Query',
   definition(t) {
@@ -67,14 +81,11 @@ const Query = objectType({
       args: {
         token: stringArg(),
       },
-      resolve: async (_, { token }) => {
-        // Authorization
-        const verifyToken: any = jwt.verify(
-          token,
-          process.env.JWT_TOKEN_SECRET
-        );
+      resolve: async (parent, { token }, ctx) => {
+        const tokenData = verifyAndDecodeToken(token);
+
         const user = await prisma.user.findOne({
-          where: { email: verifyToken.email },
+          where: { email: tokenData.email },
         });
         return user;
       },
@@ -85,14 +96,14 @@ const Query = objectType({
       args: {
         token: stringArg(),
       },
-      resolve: async (_, args, ctx) => {
+      resolve: async (parent, args, ctx) => {
         let images = await prisma.image.findMany();
+
         images = images.filter((image) => {
           return !image.privateImg;
         });
 
         const string_images = JSON.stringify(images);
-        console.log(JSON.parse(string_images));
 
         return string_images;
       },
@@ -100,10 +111,11 @@ const Query = objectType({
   },
 });
 
+// Mutations for Frontend to Backend.
 const Mutation = objectType({
   name: 'Mutation',
   definition(t) {
-    // custom resolver for images from frontend
+    // custom resolver for images from frontend.
     t.field('uploadImage', {
       type: Image,
       args: {
@@ -113,28 +125,10 @@ const Mutation = objectType({
         }),
         token: stringArg({ nullable: false }),
       },
-      resolve: async (_, { input, token }, ctx) => {
-        console.log('AT RESOLVER FOR UPLOAD IMAGE');
+      resolve: async (parent, { input, token }, ctx) => {
+        const tokenData = verifyAndDecodeToken(token);
 
-        // const res = await uploadImage(input.path);
-        console.log(input.path);
-        console.log('User passed token image upload: ' + token);
-
-        // Ensure that the token isn't fradulent.
-        const decoded_token: any = jwt.verify(
-          token,
-          process.env.JWT_TOKEN_SECRET
-        );
-        if (!decoded_token) {
-          console.log('unauthorized user detected');
-          return;
-        }
-        // User is valid
-        console.log(decoded_token);
-
-        // Configure AWS with your access and secret key.
-
-        // Configure AWS to use promise
+        // Configure AWS with access and secret keywith bluebird promise.
         aws.config.setPromisesDependency(require('bluebird'));
         aws.config.update({
           accessKeyId: process.env.ACCESS_KEY_ID,
@@ -152,11 +146,11 @@ const Mutation = objectType({
 
         const params = {
           Bucket: process.env.BUCKET_NAME,
-          Key: `${userId}.${type}`, // type is not required
+          Key: `${userId}.${type}`,
           Body: base64Data,
           ACL: 'public-read',
-          ContentEncoding: 'base64', // required
-          ContentType: `image/${type}`, // required. Notice the back ticks
+          ContentEncoding: 'base64',
+          ContentType: `image/${type}`,
         };
 
         let location = '';
@@ -166,29 +160,24 @@ const Mutation = objectType({
           location = Location;
           key = Key;
         } catch (error) {
-          // console.log(error)
+          console.log(error);
         }
+        // Now need to upload the image into the database with no id needed.
+        // Need to set the url to location for the upload.
 
-        console.log(location, key);
-
-        // Now need to upload the image into the database with no id needed
-        // need to set the url to location for the upload
-
-        console.log('adding image to database...');
         try {
           await prisma.image.create({
             data: {
               url: location,
               privateImg: false,
-              userEmail: decoded_token.email, // applied any type, no time to write interface
+              userEmail: tokenData.email,
               User: {
-                connect: { id: decoded_token.id },
+                connect: { id: tokenData.id },
               },
             },
           });
         } catch (error) {
           console.log(error);
-          console.log('error adding image to database');
         }
 
         return {
@@ -206,7 +195,7 @@ const Mutation = objectType({
         email: stringArg({ nullable: false }),
         password: stringArg({ nullable: false }),
       },
-      resolve: async (_, args, ctx) => {
+      resolve: async (parent, args, ctx) => {
         const user = await prisma.user.findOne({
           where: { email: String(args.email) },
         });
@@ -242,7 +231,7 @@ const Mutation = objectType({
         email: stringArg({ nullable: false }),
         password: stringArg({ nullable: false }),
       },
-      resolve: async (_, { email, password }, ctx) => {
+      resolve: async (parent, { email, password }, ctx) => {
         const salt = crypto.randomBytes(16).toString('hex');
         const hash = crypto
           .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
@@ -272,13 +261,9 @@ const Mutation = objectType({
         imgUrl: stringArg(),
         token: stringArg(),
       },
-      resolve: async (_, { imgUrl, token }, ctx) => {
-        console.log(imgUrl);
-        console.log(token);
-        const decodedToken: any = jwt.verify(
-          token,
-          process.env.JWT_TOKEN_SECRET
-        );
+      resolve: async (parent, { imgUrl, token }, ctx) => {
+        verifyAndDecodeToken(token);
+
         const fetchOneImg = await prisma.image.findOne({
           where: {
             url: imgUrl,
@@ -302,46 +287,49 @@ const Mutation = objectType({
         imgUrl: stringArg(),
         token: stringArg(),
       },
-      resolve: async (_, { imgUrl, token }, ctx) => {
-        console.log(imgUrl);
-        console.log(token);
-        const decodedToken: any = jwt.verify(
-          token,
-          process.env.JWT_TOKEN_SECRET
-        );
-        const fetchOneImg = await prisma.image.findOne({
-          where: {
-            url: imgUrl,
-          },
-        });
+      resolve: async (parent, { imgUrl, token }, ctx) => {
+        verifyAndDecodeToken(token);
+        // Note that user can delete the images of other users if they use the api directly.
+        // Need to correct security issue here.
         await prisma.image.delete({
           where: {
             url: imgUrl,
           },
         });
-        return '';
+        return imgUrl;
       },
     });
   },
 });
 
+// Combine all Queries, Mutations, and Models to generate the nexus-typegen and schema.
 export const schema = makeSchema({
-  types: [Query, Mutation, Image, User, GQLDate],
+  types: [Query, Mutation, Image, User],
   outputs: {
     typegen: path.join(process.cwd(), 'pages', 'api', 'nexus-typegen.ts'),
     schema: path.join(process.cwd(), 'pages', 'api', 'schema.graphql'),
   },
 });
 
+// With Next.js with Apollo (Apollo-Server-Micro) you are going to run into an issue here.
+// For the API, bodyParser must be false, this disables the bodyParser for Next.js.
+// Not setting bodyParser to false, causes this server to hang on requests.
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
+// It would be ideal to move the authentication into the context and to attach the token
+// to the user's request headers.
 export default new ApolloServer({
   schema,
-  context({ req }) {},
+  context({ req }) {
+    // Ideally have authorization code from helper here.
+    // Need to attach tokens to request headers as opposed to passing tokens as args to resolvers.
+    // This can be done on the frontend in Apollo Client.
+    // Context maybe implemented differently between Apollo-Server and Apollo-Server-Micro.
+  },
 }).createHandler({
   path: '/api',
 });

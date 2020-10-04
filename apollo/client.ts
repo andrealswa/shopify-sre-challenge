@@ -22,6 +22,7 @@ export const signedInVar = makeVar({
 const prod = process.env.NODE_ENV === 'production';
 
 export const client = new ApolloClient({
+  // https://shopify-sre-challenge.vercel.app/api
   uri: 'https://shopify-sre-challenge.vercel.app/api', //'http://localhost:3000/api', //
   cache: new InMemoryCache({
     typePolicies: {

@@ -13,7 +13,6 @@ export const MovieSearchList = () => {
   // let cancel
 
   const handleMovieSearch = async (event) => {
-    console.log(event.target.value.replace(' ', '_'));
     let results;
     url.searchParams.set('s', event.target.value.replace(' ', '_'));
     try {
@@ -21,8 +20,6 @@ export const MovieSearchList = () => {
     } catch (error) {
       console.log('Request cancelled');
     }
-    console.log(results);
-    console.log(url);
     if (results.data.Search) {
       interface SearchItem {
         Poster: String;
